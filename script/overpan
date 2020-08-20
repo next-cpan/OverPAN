@@ -1,0 +1,78 @@
+#!/usr/bin/env perl
+
+package overpan;
+
+BEGIN {
+    if ( "$]" < 5.019 ) {    # needs 5.20 for function signature
+        die <<"EOS";
+$0 is not supported on Perl $]
+	cnext needs Perl 5.20 or higher
+	please consider alternate solutions such as App::cpanminus or App::cpm
+EOS
+    }
+}
+
+use strict;
+use warnings;
+
+use FindBin qw($Bin);    # Auto-removed
+use lib "$Bin/../lib", "$Bin/../fatlib";    # Auto-removed
+
+use OverPAN::Client ();
+
+unless (caller) {
+    exit( OverPAN::Client->new( name => "App::overpan" )->run(@ARGV) // 0 );
+}
+
+1;
+
+=encoding utf8
+
+=head1 NAME
+
+App::overpan -  OverPAN client to patch CPAN
+
+=head1 SYNOPSIS
+
+    # Patch Distro-v1.00 recipe
+
+    > overpan Distro-v1.00
+    # switch to work-branch
+    # apply existing patches
+    HACK HACK
+    ...
+    > overpan --commit | --abort
+
+
+Run C<overpan -h> or C<perldoc overpan> for more options.
+
+=head1 DESCRIPTION
+
+=head1 INSTALLATION
+
+=head2 Installing OverPAN
+
+=head1 MANUAL
+
+=head2 Patch a distribution
+
+=head1 USAGE
+
+  overpan [ACTION] [OPTIONS] [ARGS]
+
+=head2 ACTIONS
+
+      patch               default action to patch a distributions
+      commit              commit patches
+      abort               abort current patch process
+      test                testing the patches for a distro
+      install             installing a distribution with the patches
+      help                display this documentation
+
+=head2 OPTIONS
+
+=head2 Generic options
+
+   -v, --verbose            Turns on chatty output
+   -d, --debug              enable --verbose and display some additional informations
+       --color, --no-color  turn on/off color output, default: on

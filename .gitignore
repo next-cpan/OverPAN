@@ -1,0 +1,13 @@
+.build
+*.tar.gz
+OverPAN-*
+MYMETA.json
+MYMETA.yml
+Makefile
+!Makefile/
+blib/
+pm_to_blib
+MANIFEST
+/fatpack-build/local
+.cpbuild
+.DS_Store
