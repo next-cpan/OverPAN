@@ -1,4 +1,11 @@
+#!perl
+use strict;
+use warnings;
+
 requires 'perl', '5.018';
+
+requires 'MetaCPAN::Client';
+requires 'CPAN::DistnameInfo';
 
 on test => sub {
 	# continuous integration should only need this

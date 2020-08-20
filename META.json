@@ -54,6 +54,8 @@
       },
       "runtime" : {
          "requires" : {
+            "CPAN::DistnameInfo" : "0",
+            "MetaCPAN::Client" : "0",
             "perl" : "5.018"
          }
       },
@@ -76,6 +78,15 @@
       },
       "OverPAN::Client" : {
          "file" : "lib/OverPAN/Client.pm"
+      },
+      "OverPAN::Client::cmd::help" : {
+         "file" : "lib/OverPAN/Client/cmd/help.pm"
+      },
+      "OverPAN::Client::cmd::version" : {
+         "file" : "lib/OverPAN/Client/cmd/version.pm"
+      },
+      "OverPAN::Logger" : {
+         "file" : "lib/OverPAN/Logger.pm"
       },
       "OverPAN::std" : {
          "file" : "lib/OverPAN/std.pm"

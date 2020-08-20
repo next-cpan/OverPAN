@@ -16,8 +16,11 @@ my %WriteMakefileArgs = (
     "LICENSE"          => "perl",
     "MIN_PERL_VERSION" => "5.018",
     "NAME"             => "OverPAN",
-    "PREREQ_PM"        => {},
-    "TEST_REQUIRES"    => {
+    "PREREQ_PM"        => {
+        "CPAN::DistnameInfo" => 0,
+        "MetaCPAN::Client"   => 0
+    },
+    "TEST_REQUIRES" => {
         "File::Slurper"             => 0,
         "Test2::Bundle::Extended"   => 0,
         "Test2::Harness"            => "1.000015",
@@ -33,7 +36,9 @@ my %WriteMakefileArgs = (
 );
 
 my %FallbackPrereqs = (
+    "CPAN::DistnameInfo"        => 0,
     "File::Slurper"             => 0,
+    "MetaCPAN::Client"          => 0,
     "Test2::Bundle::Extended"   => 0,
     "Test2::Harness"            => "1.000015",
     "Test2::Plugin::NoWarnings" => 0,
