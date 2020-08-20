@@ -93,6 +93,17 @@
       }
    },
    "release_status" : "stable",
+   "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/next-cpan/OverPAN/issues"
+      },
+      "homepage" : "https://github.com/next-cpan/OverPAN",
+      "repository" : {
+         "type" : "git",
+         "url" : "https://github.com/next-cpan/OverPAN.git",
+         "web" : "https://github.com/next-cpan/OverPAN"
+      }
+   },
    "version" : "0.0001",
    "x_contributors" : [
       "Nicolas R <nicolas@atoomic.org>"
