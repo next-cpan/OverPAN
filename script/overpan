@@ -6,8 +6,7 @@ BEGIN {
     if ( "$]" < 5.019 ) {    # needs 5.20 for function signature
         die <<"EOS";
 $0 is not supported on Perl $]
-	cnext needs Perl 5.20 or higher
-	please consider alternate solutions such as App::cpanminus or App::cpm
+	overpan needs Perl 5.20 or higher
 EOS
     }
 }
@@ -15,7 +14,7 @@ EOS
 use strict;
 use warnings;
 
-use FindBin qw($Bin);    # Auto-removed
+use FindBin qw($Bin);                       # Auto-removed
 use lib "$Bin/../lib", "$Bin/../fatlib";    # Auto-removed
 
 use OverPAN::Client ();
