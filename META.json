@@ -74,6 +74,9 @@
          "file" : "lib/OverPAN.pm",
          "version" : "0.0001"
       },
+      "OverPAN::Client" : {
+         "file" : "lib/OverPAN/Client.pm"
+      },
       "OverPAN::std" : {
          "file" : "lib/OverPAN/std.pm"
       }

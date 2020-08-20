@@ -20,6 +20,8 @@ use Simple::Accessor qw{
     cwd
     homedir
     builddir
+
+    debug
 };
 
 use File::Path qw(mkpath rmtree);
@@ -175,7 +177,7 @@ sub get_cmd_sub_for ( $self, $cmd ) {
     $cmd = $aliases->{$cmd} if defined $aliases->{$cmd};
 
     return unless $cmd =~ m{^[A-Za-z0-9_]+$};
-    return "OverPAN::cmd::$cmd"->can('run');
+    return "OverPAN::Client::cmd::$cmd"->can('run');
 }
 
 sub run ( $self, @argv ) {
