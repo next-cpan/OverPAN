@@ -80,14 +80,32 @@
       "OverPAN::Client" : {
          "file" : "lib/OverPAN/Client.pm"
       },
+      "OverPAN::Client::cmd::abort" : {
+         "file" : "lib/OverPAN/Client/cmd/abort.pm"
+      },
       "OverPAN::Client::cmd::help" : {
          "file" : "lib/OverPAN/Client/cmd/help.pm"
+      },
+      "OverPAN::Client::cmd::patch" : {
+         "file" : "lib/OverPAN/Client/cmd/patch.pm"
       },
       "OverPAN::Client::cmd::version" : {
          "file" : "lib/OverPAN/Client/cmd/version.pm"
       },
+      "OverPAN::Http" : {
+         "file" : "lib/OverPAN/Http.pm"
+      },
+      "OverPAN::IPC" : {
+         "file" : "lib/OverPAN/IPC.pm"
+      },
       "OverPAN::Logger" : {
          "file" : "lib/OverPAN/Logger.pm"
+      },
+      "OverPAN::Patch" : {
+         "file" : "lib/OverPAN/Patch.pm"
+      },
+      "OverPAN::Unpacker" : {
+         "file" : "lib/OverPAN/Unpacker.pm"
       },
       "OverPAN::std" : {
          "file" : "lib/OverPAN/std.pm"

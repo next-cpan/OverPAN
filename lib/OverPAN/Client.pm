@@ -123,6 +123,7 @@ sub parse_options ( $self, @opts ) {
 
     $self->{run_tests} = 0 if $n_tests;            # alias -n for --no-tests
 
+    $self->{verbose} //= 1;
     # debug enable verbose
     $self->{verbose} = 1 if $self->{debug};
 
@@ -166,7 +167,7 @@ sub get_cmd_sub_for ( $self, $cmd ) {
     # command aliases
     my $aliases = {
         h => 'help',
-        v => 'version',
+        #v => 'version',
         V => 'version',
         a => 'abort',
         q => 'abort',

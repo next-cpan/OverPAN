@@ -34,7 +34,7 @@ my %color = (
     DONE      => COLOR_GREEN,
     OK        => COLOR_GREEN,
     WARN      => COLOR_YELLOW,
-    INFO      => COLOR_GREEN,
+    INFO      => COLOR_WHITE,
     DEBUG     => COLOR_WHITE,
     RUN       => COLOR_WHITE,
 );
