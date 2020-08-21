@@ -4,8 +4,9 @@ use warnings;
 
 requires 'perl', '5.018';
 
-requires 'MetaCPAN::Client';
 requires 'CPAN::DistnameInfo';
+requires 'MetaCPAN::Client';
+requires 'Simple::Accessor';
 
 on test => sub {
 	# continuous integration should only need this

@@ -1,0 +1,81 @@
+name: testsuite
+
+on:
+  push:
+    branches: ["*"]
+  pull_request:
+    branches: ["*"]
+
+jobs:
+  unit-tests:
+    env:
+      # some plugins still needs this to run their tests...
+      PERL_USE_UNSAFE_INC: 0
+      AUTHOR_TESTING: 1
+      AUTOMATED_TESTING: 1
+      RELEASE_TESTING: 1
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        perl-version:
+          - "5.32"
+          - "5.30"
+          - "5.28"
+
+    container:
+      image: perldocker/perl-tester:${{ matrix.perl-version }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: perl -V
+        run: perl -V
+
+      - name: Install Dependencies with cpm
+        uses: perl-actions/install-with-cpm@v1
+        with:
+          cpanfile: cpanfile
+          sudo: false
+
+      - name: Running Unit Tests
+        run: prove -vl t/*.t
+
+  integration:
+    env:
+      # some plugins still needs this to run their tests...
+      PERL_USE_UNSAFE_INC: 0
+      AUTHOR_TESTING: 1
+      AUTOMATED_TESTING: 1
+      RELEASE_TESTING: 1
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        perl-version:
+          - "5.32"
+          - "5.30"
+          - "5.28"
+        #fatpack: [1, 0]
+
+    container:
+      image: perldocker/perl-tester:${{ matrix.perl-version }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: perl -V
+        run: perl -V
+
+      - name: Install Dependencies with cpm
+        uses: perl-actions/install-with-cpm@v1
+        with:
+          cpanfile: cpanfile
+          sudo: false
+
+      - name: Running Tests
+        run: prove -vl t/integration/*.t
