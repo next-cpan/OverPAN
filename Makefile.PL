@@ -31,7 +31,7 @@ my %WriteMakefileArgs = (
     },
     "VERSION" => "0.0001",
     "test"    => {
-        "TESTS" => "t/*.t"
+        "TESTS" => "t/*.t t/integration/*.t"
     }
 );
 
