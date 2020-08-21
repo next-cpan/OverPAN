@@ -1,6 +1,6 @@
 .build
 *.tar.gz
-OverPAN-*
+/OverPAN-*
 MYMETA.json
 MYMETA.yml
 Makefile
