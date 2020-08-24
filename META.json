@@ -73,6 +73,66 @@
       }
    },
    "provides" : {
+      "MetaCPAN::Client" : {
+         "file" : "lib/OverPAN/vendor/MetaCPAN/Client.pm"
+      },
+      "MetaCPAN::Client::Author" : {
+         "file" : "lib/OverPAN/vendor/MetaCPAN/Client/Author.pm"
+      },
+      "MetaCPAN::Client::Cover" : {
+         "file" : "lib/OverPAN/vendor/MetaCPAN/Client/Cover.pm"
+      },
+      "MetaCPAN::Client::Distribution" : {
+         "file" : "lib/OverPAN/vendor/MetaCPAN/Client/Distribution.pm"
+      },
+      "MetaCPAN::Client::DownloadURL" : {
+         "file" : "lib/OverPAN/vendor/MetaCPAN/Client/DownloadURL.pm"
+      },
+      "MetaCPAN::Client::Favorite" : {
+         "file" : "lib/OverPAN/vendor/MetaCPAN/Client/Favorite.pm"
+      },
+      "MetaCPAN::Client::File" : {
+         "file" : "lib/OverPAN/vendor/MetaCPAN/Client/File.pm"
+      },
+      "MetaCPAN::Client::Mirror" : {
+         "file" : "lib/OverPAN/vendor/MetaCPAN/Client/Mirror.pm"
+      },
+      "MetaCPAN::Client::Module" : {
+         "file" : "lib/OverPAN/vendor/MetaCPAN/Client/Module.pm"
+      },
+      "MetaCPAN::Client::Package" : {
+         "file" : "lib/OverPAN/vendor/MetaCPAN/Client/Package.pm"
+      },
+      "MetaCPAN::Client::Permission" : {
+         "file" : "lib/OverPAN/vendor/MetaCPAN/Client/Permission.pm"
+      },
+      "MetaCPAN::Client::Pod" : {
+         "file" : "lib/OverPAN/vendor/MetaCPAN/Client/Pod.pm"
+      },
+      "MetaCPAN::Client::Rating" : {
+         "file" : "lib/OverPAN/vendor/MetaCPAN/Client/Rating.pm"
+      },
+      "MetaCPAN::Client::Release" : {
+         "file" : "lib/OverPAN/vendor/MetaCPAN/Client/Release.pm"
+      },
+      "MetaCPAN::Client::Request" : {
+         "file" : "lib/OverPAN/vendor/MetaCPAN/Client/Request.pm"
+      },
+      "MetaCPAN::Client::ResultSet" : {
+         "file" : "lib/OverPAN/vendor/MetaCPAN/Client/ResultSet.pm"
+      },
+      "MetaCPAN::Client::Role::Entity" : {
+         "file" : "lib/OverPAN/vendor/MetaCPAN/Client/Role/Entity.pm"
+      },
+      "MetaCPAN::Client::Role::HasUA" : {
+         "file" : "lib/OverPAN/vendor/MetaCPAN/Client/Role/HasUA.pm"
+      },
+      "MetaCPAN::Client::Scroll" : {
+         "file" : "lib/OverPAN/vendor/MetaCPAN/Client/Scroll.pm"
+      },
+      "MetaCPAN::Client::Types" : {
+         "file" : "lib/OverPAN/vendor/MetaCPAN/Client/Types.pm"
+      },
       "OverPAN" : {
          "file" : "lib/OverPAN.pm",
          "version" : "0.0001"
