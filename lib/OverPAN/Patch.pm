@@ -19,11 +19,15 @@ use Simple::Accessor qw{
 
   patch_dir
 };
+with 'OverPAN::Roles::JSON';
+
+# FIXME rename patch_dir to work_dir
 
 use OverPAN::Unpacker ();
 use OverPAN::Http     ();
 use OverPAN::Git      ();
 
+use File::Slurper ();
 use File::Copy qw{move copy};
 use File::Path qw(mkpath rmtree);
 use CPAN::DistnameInfo ();
@@ -114,10 +118,7 @@ EOS
         $self->extract_tarball  or return;
 
         # git init directory + pa
-        my $git = $self->git;
-
-        # apply patches
-        $self->apply_patches;
+        $self->git_init;
     }
 
     return 1;
@@ -127,7 +128,36 @@ sub _build_tarball($self) {
     return $self->cache_dir . '/' . $self->distro_buildname . '.tar.gz';
 }
 
-sub git_apply_patches($self) {
+sub git_init($self) {
+    my $git = $self->git;
+    $git->init;
+
+    $self->setup_overspan_json;
+
+    # apply patches
+    $self->apply_patches;
+}
+
+sub setup_overspan_json($self) {
+
+    my $data = {
+        overpan_version  => $OverPAN::VERSION,
+        call_from        => $self->cli->cwd,
+        distro_name      => $self->distro_name,
+        distro_version   => $self->distro_version,
+        distro_url       => $self->distro_url,
+        distro_buildname => $self->distro_buildname,
+    };
+
+    my $str = $self->json->encode($data);
+    File::Slurper::write_text( $self->patch_dir . '/.overpan.json', $str );
+
+    return 1;
+
+    # $self->json->decode( read_file( $self->file ) );
+}
+
+sub apply_patches($self) {
     DEBUG("git_apply_patches: ");
 
     my $git = $self->git;

@@ -2,9 +2,11 @@ package OverPAN::Client::cmd::patch;
 
 use OverPAN::std;
 
-use OverPAN        ();
-use OverPAN::Patch ();
+use OverPAN ();
 use OverPAN::Logger;    # import all
+
+use OverPAN::Patch ();
+use OverPAN::Shell ();
 
 sub run ( $self, @distribution ) {
 
@@ -47,10 +49,7 @@ At any time you can abort by exiting the current shell session
 either type 'exit' or use 'overpan abort' command.
 EOS
 
-        # ENV{SHELL}
-        #my $shell = OverPAN::Shell->new();
-        #
-        1;
+        my $shell = OverPAN::Shell->new( dir => $patch->patch_dir );
     }
 
     # return 1 unless scalar @modules;
