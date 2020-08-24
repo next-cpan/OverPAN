@@ -25,6 +25,8 @@ use Simple::Accessor qw{
   cache_dir
 
   debug
+  verbose
+  force
 };
 
 use File::Path qw(mkpath rmtree);
@@ -115,6 +117,7 @@ sub parse_options ( $self, @opts ) {
         # used
         "color!" => \( $self->{color} ),
 
+        "f|force"        => \( $self->{force} ),
         "v|verbose"      => \( $self->{verbose} ),
         "d|debug"        => \( $self->{debug} ),
         "show-progress!" => \( $self->{show_progress} ),

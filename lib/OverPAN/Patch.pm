@@ -7,6 +7,7 @@ use OverPAN::Logger;
 use Simple::Accessor qw{
   cli
   http
+  git
 
   distro_name
   distro_version
@@ -21,6 +22,7 @@ use Simple::Accessor qw{
 
 use OverPAN::Unpacker ();
 use OverPAN::Http     ();
+use OverPAN::Git      ();
 
 use File::Copy qw{move copy};
 use File::Path qw(mkpath rmtree);
@@ -62,11 +64,15 @@ sub _build_http {
     return OverPAN::Http->new;    # maybe move it to the client?
 }
 
-sub setup ( $self, $distro ) {    # MAYBE move in build...
-                                  # create build directory
-                                  # download and extract tarball
-                                  # git init directory
-                                  # apply patches
+sub _build_git($self) {
+    return OverPAN::Git->new( $self->patch_dir ); # maybe move it to the client?
+}
+
+sub setup ( $self, $distro ) {                    # MAYBE move in build...
+                                                  # create build directory
+                                                  # download and extract tarball
+                                                  # git init directory
+                                                  # apply patches
 
     # 1. name, version, url for the distro
     return unless $self->set_name_version_url_for_distro($distro);
@@ -77,20 +83,61 @@ sub setup ( $self, $distro ) {    # MAYBE move in build...
 
     FATAL("OverPAN::Patch needs a cli") unless $self->cli;
 
-    # maybe an option to bypass this? or the reverse using --force
-    # download (if needed) and extract tarball
-    $self->download_tarball or return;
-    $self->extract_tarball  or return;
+    # force option cleanup previous patches
+    my $need_setup = 1;
+    my $patch_dir  = $self->patch_dir;
+    if ( -d $patch_dir && -d "$patch_dir/.git" ) {
+        my $dv = $self->distro_with_version;
+        if ( $self->cli->force ) {
+            INFO("Removing previous session for $dv [--force]");
+            rmtree($patch_dir);
+        }
+        else {
+            $need_setup = 0;
+            INFO( <<"EOS");
+Reusing a previous patch session for $dv
+If you want to start a new session 
+either cancel the existing one using
+    overpan abort
+or start a fresh session by using '--force'
+    overpan patch --force $dv
+EOS
+        }
+    }
 
-    # git init directory
+    DEBUG("need_setup ? $need_setup");
 
-    # apply patches
+    if ($need_setup) {
+
+        # download (if needed) and extract tarball
+        $self->download_tarball or return;
+        $self->extract_tarball  or return;
+
+        # git init directory + pa
+        my $git = $self->git;
+
+        # apply patches
+        $self->apply_patches;
+    }
 
     return 1;
 }
 
 sub _build_tarball($self) {
     return $self->cache_dir . '/' . $self->distro_buildname . '.tar.gz';
+}
+
+sub git_apply_patches($self) {
+    DEBUG("git_apply_patches: ");
+
+    my $git = $self->git;
+
+    my @patches;    # FIXME
+    foreach my $p (@patches) {
+        $git->apply_patch($p);
+    }
+
+    return;
 }
 
 sub download_tarball($self) {
