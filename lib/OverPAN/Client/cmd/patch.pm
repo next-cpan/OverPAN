@@ -2,36 +2,54 @@ package OverPAN::Client::cmd::patch;
 
 use OverPAN::std;
 
-use OverPAN ();
+use OverPAN        ();
 use OverPAN::Patch ();
-use OverPAN::Logger; # import all
+use OverPAN::Logger;    # import all
 
 sub run ( $self, @distribution ) {
-    
+
     if ( scalar @distribution == 0 ) {
-        FAIL("Missing arg: patch action needs one extra argument with a distribution name");
+        FAIL(
+"Missing arg: patch action needs one extra argument with a distribution name"
+        );
         INFO("Sample: overpan Foo\@v1");
         return 1;
-    } elsif ( scalar @distribution > 1 ) {
-        FAIL("Too many args - patch action can only work on a single distribution");
+    }
+    elsif ( scalar @distribution > 1 ) {
+        FAIL(
+"Too many args - patch action can only work on a single distribution"
+        );
         return 1;
     }
 
     # only a single distro
-    my ( $distro ) = @distribution;
+    my ($distro) = @distribution;
 
     # Check that the requested distro/version is ok
-    my $patch = OverPAN::Patch->new( cli => $self );    
-    $patch->setup( $distro );
-    # create build directory
-    # download and extract tarball
-    # git init directory
-    # apply patches
+    my $patch = OverPAN::Patch->new( cli => $self );
+    if ( !$patch->setup($distro) ) {
+        FAIL("Cannot setup distribution $distro");
+        return 1;
+    }
+
+    #INFO(" to ");
+
+    my $distro_with_version = $patch->distro_with_version;
 
     {
         # start an interactive shell
+        INFO(<<"EOS");
+Starting a new shell for patching $distro_with_version
+- Add, remove, edit patches
+- Once ready use 'overpan commit' command to save your patches
+
+At any time you can abort by exiting the current shell session
+either type 'exit' or use 'overpan abort' command.
+EOS
+
+        # ENV{SHELL}
         #my $shell = OverPAN::Shell->new();
-        # 
+        #
         1;
     }
 
@@ -56,7 +74,7 @@ sub run ( $self, @distribution ) {
     #     }
     # }
 
-    DONE("patch  succeeds");
+    DONE("patch succeeds");
 
     return 0;
 }

@@ -15,13 +15,16 @@ use OverPAN::Client::cmd::version ();
 use Cwd ();
 
 use Simple::Accessor qw{
-    name
-    http
-    cwd
-    homedir
-    builddir
+  name
+  http
+  cwd
 
-    debug
+  homedir
+
+  build_dir
+  cache_dir
+
+  debug
 };
 
 use File::Path qw(mkpath rmtree);
@@ -67,7 +70,17 @@ sub _build_homedir {
     $ENV{HOME} or die q[HOME environmenet variable not set];
 }
 
-sub _build_builddir($self) {
+# we are storing everythink in that directory
+#   can be customized using --cache-dir
+sub _build_cache_dir($self) {
+    my $path = $self->homedir . '/.overpan';
+    return $path if -d $path;
+    mkpath($path)
+      or FATAL("Fail to create ~/.overpan cache directory directory at: $path");
+    return $path;
+}
+
+sub _build_build_dir($self) {
     my $path = $self->cache_dir . '/build';
 
     return $path if -d $path;
@@ -78,14 +91,14 @@ sub _build_builddir($self) {
 
 sub DESTROY($self) {
 
- # use on purpose the hash accessor to avoid creating the directory on DESTROY
-    if ( ref $self && $self->{builddir} && $self->{cleanup} ) {
-        my $dir = $self->{builddir};
-        if ( -d $dir && !-l $dir ) {
-            DEBUG("rmtree .build directory: $dir");
-            File::Path::rmtree($dir);
-        }
-    }
+ # # use on purpose the hash accessor to avoid creating the directory on DESTROY
+ #    if ( ref $self && $self->{build_dir} && $self->{cleanup} ) {
+ #        my $dir = $self->{build_dir};
+ #        if ( -d $dir && !-l $dir ) {
+ #            DEBUG("rmtree .build directory: $dir");
+ #            File::Path::rmtree($dir);
+ #        }
+ #    }
 }
 
 sub _build_http {
@@ -124,6 +137,7 @@ sub parse_options ( $self, @opts ) {
     $self->{run_tests} = 0 if $n_tests;            # alias -n for --no-tests
 
     $self->{verbose} //= 1;
+
     # debug enable verbose
     $self->{verbose} = 1 if $self->{debug};
 
@@ -167,6 +181,7 @@ sub get_cmd_sub_for ( $self, $cmd ) {
     # command aliases
     my $aliases = {
         h => 'help',
+
         #v => 'version',
         V => 'version',
         a => 'abort',
@@ -202,7 +217,7 @@ sub run ( $self, @argv ) {
     }
 
     die qq[Unknown subcommand '$cmd']
-        unless defined $run && ref $run eq 'CODE';
+      unless defined $run && ref $run eq 'CODE';
 
     $self->parse_options(@argv);
 
