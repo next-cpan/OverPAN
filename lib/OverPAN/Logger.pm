@@ -86,23 +86,28 @@ sub log ( $self_or_class, %options ) {
     my $eol = $show_progress && !$options{no_progress} ? ""         : "\n";
     my $r   = $show_progress                           ? "\r\033[K" : "";
 
-    if ($verbose) {
+    my @lines = split( /\n/, $message );
 
-        # type -> 5 + 9 + 3
-        $type = $is_color
-          && $type ? sprintf( "%-17s", $type ) : sprintf( "%-9s", $type || "" );
-        _print( $r
-              . sprintf( "%s %s %s%s$eol", $result, $type, $message, $optional )
-        );
-    }
-    else {
-        _print(
-            $r
-              . join( " ",
-                map { defined $_ ? $_ : () } $result,
-                $type, $message . $optional )
-              . $eol
-        );
+    foreach my $line (@lines) {
+        if ($verbose) {
+
+            # type -> 5 + 9 + 3
+            $type = $is_color && $type
+              ? sprintf( "%-17s", $type )
+              : sprintf( "%-9s",  $type || "" );
+            _print( $r
+                  . sprintf( "%s %s %s%s$eol", $result, $type, $line,
+                    $optional ) );
+        }
+        else {
+            _print(
+                $r
+                  . join( " ",
+                    map { defined $_ ? $_ : () } $result,
+                    $type, $line . $optional )
+                  . $eol
+            );
+        }
     }
 
     return;
