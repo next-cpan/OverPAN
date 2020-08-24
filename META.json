@@ -43,7 +43,6 @@
             "Carton::Snapshot" : "0",
             "Dist::Milla" : "v1.0.20",
             "File::Slurper" : "0",
-            "JSON" : "0",
             "Module::Build::Tiny" : "0.039",
             "Module::Install" : "0",
             "Perl::Strip" : "0",
@@ -55,6 +54,10 @@
       "runtime" : {
          "requires" : {
             "CPAN::DistnameInfo" : "0",
+            "File::Slurper" : "0",
+            "File::pushd" : "0",
+            "Git::Repository" : "0",
+            "JSON" : "0",
             "MetaCPAN::Client" : "0",
             "Simple::Accessor" : "0",
             "perl" : "5.018"
@@ -62,7 +65,6 @@
       },
       "test" : {
          "requires" : {
-            "File::Slurper" : "0",
             "Test2::Bundle::Extended" : "0",
             "Test2::Harness" : "1.000015",
             "Test2::Plugin::NoWarnings" : "0",
@@ -152,6 +154,9 @@
       "OverPAN::Client::cmd::version" : {
          "file" : "lib/OverPAN/Client/cmd/version.pm"
       },
+      "OverPAN::Git" : {
+         "file" : "lib/OverPAN/Git.pm"
+      },
       "OverPAN::Http" : {
          "file" : "lib/OverPAN/Http.pm"
       },
@@ -163,6 +168,12 @@
       },
       "OverPAN::Patch" : {
          "file" : "lib/OverPAN/Patch.pm"
+      },
+      "OverPAN::Roles::JSON" : {
+         "file" : "lib/OverPAN/Roles/JSON.pm"
+      },
+      "OverPAN::Shell" : {
+         "file" : "lib/OverPAN/Shell.pm"
       },
       "OverPAN::Unpacker" : {
          "file" : "lib/OverPAN/Unpacker.pm"

@@ -5,14 +5,15 @@ use warnings;
 requires 'perl', '5.018';
 
 requires 'CPAN::DistnameInfo';
+requires 'File::pushd';
+requires 'File::Slurper';
+requires 'Git::Repository';
+requires 'JSON';
 requires 'MetaCPAN::Client';
 requires 'Simple::Accessor';
-requires 'Git::Repository';
 
 on test => sub {
-	# continuous integration should only need this
-
-	requires 'File::Slurper';
+	# continuous integration should only need this	
 
 	requires 'Test::More';
 	requires 'Test2::Harness' => '1.000015';
@@ -24,7 +25,6 @@ on test => sub {
 };
 
 on develop => sub {
-	requires 'JSON';
 	requires 'Module::Build::Tiny', '0.039';
 	requires 'Module::Install';
 	requires 'Test::Requires';
