@@ -1,11 +1,13 @@
 #!perl
 
 use FindBin;
-use lib $FindBin::Bin . '/../lib';
+use lib $FindBin::Bin . '/lib';
 
 use Test2::Bundle::Extended;
 use Test2::Tools::Explain;
 use Test2::Plugin::NoWarnings;
+
+use Test::OverPAN::Logger;
 
 use OverPAN::std;
 

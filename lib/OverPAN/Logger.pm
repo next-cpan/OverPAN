@@ -8,8 +8,9 @@ use Exporter 'import';
 
 $| = 1;
 
-our @EXPORT    = qw{OK DONE FAIL ERROR WARN INFO DEBUG FATAL};
-our @EXPORT_OK = ( @EXPORT, qw(fetch resolve install configure build test RUN STDERROR) );
+our @EXPORT = qw{OK DONE FAIL ERROR WARN INFO DEBUG FATAL};
+our @EXPORT_OK =
+  ( @EXPORT, qw(fetch resolve install configure build test RUN STDERROR) );
 
 our $COLOR;
 our $VERBOSE;
@@ -27,16 +28,16 @@ use constant COLOR_CYAN   => 36;
 use constant COLOR_WHITE  => 7;
 
 my %color = (
-    FAIL      => COLOR_RED,
-    ERROR     => COLOR_RED,      # maybe merge with FAIL ?
-    STDERROR  => COLOR_RED,      # output from IPC
-    FATAL     => COLOR_RED,
-    DONE      => COLOR_GREEN,
-    OK        => COLOR_GREEN,
-    WARN      => COLOR_YELLOW,
-    INFO      => COLOR_WHITE,
-    DEBUG     => COLOR_WHITE,
-    RUN       => COLOR_WHITE,
+    FAIL     => COLOR_RED,
+    ERROR    => COLOR_RED,      # maybe merge with FAIL ?
+    STDERROR => COLOR_RED,      # output from IPC
+    FATAL    => COLOR_RED,
+    DONE     => COLOR_GREEN,
+    OK       => COLOR_GREEN,
+    WARN     => COLOR_YELLOW,
+    INFO     => COLOR_WHITE,
+    DEBUG    => COLOR_WHITE,
+    RUN      => COLOR_WHITE,
 );
 
 sub new ( $class, @args ) {
@@ -55,14 +56,16 @@ sub log ( $self_or_class, %options ) {
     my $message = $options{message};
     chomp $message;
 
-    my $optional      = $options{optional} ? " ($options{optional})" : "";
-    my $result        = $options{result};
-    my $is_color      = ref $self_or_class ? $self_or_class->{color} : $COLOR;
-    my $verbose       = ref $self_or_class ? $self_or_class->{verbose} : $VERBOSE;
-    my $show_progress = ref $self_or_class ? $self_or_class->{show_progress} : $SHOW_PROGRESS;
+    my $optional = $options{optional} ? " ($options{optional})" : "";
+    my $result   = $options{result};
+    my $is_color = ref $self_or_class ? $self_or_class->{color} : $COLOR;
+    my $verbose  = ref $self_or_class ? $self_or_class->{verbose} : $VERBOSE;
+    my $show_progress =
+      ref $self_or_class ? $self_or_class->{show_progress} : $SHOW_PROGRESS;
 
     if ( !$result && $DEBUG ) {
-        my ( $sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst ) = localtime(time);
+        my ( $sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst ) =
+          localtime(time);
         $year += 1900;
         $mon++;
         $result = sprintf(
@@ -74,8 +77,9 @@ sub log ( $self_or_class, %options ) {
     $result //= '';
 
     if ($is_color) {
-        $type   = "\e[$color{$type}m$type\e[m"     if $type   && $color{$type};
-        $result = "\e[$color{$result}m$result\e[m" if $result && $color{$result};
+        $type   = "\e[$color{$type}m$type\e[m" if $type && $color{$type};
+        $result = "\e[$color{$result}m$result\e[m"
+          if $result && $color{$result};
         $optional = "\e[1;37m$optional\e[m" if $optional;
     }
 
@@ -85,13 +89,27 @@ sub log ( $self_or_class, %options ) {
     if ($verbose) {
 
         # type -> 5 + 9 + 3
-        $type = $is_color && $type ? sprintf( "%-17s", $type ) : sprintf( "%-9s", $type || "" );
-        print STDERR $r . sprintf "%s %s %s%s$eol", $result, $type, $message, $optional;
+        $type = $is_color
+          && $type ? sprintf( "%-17s", $type ) : sprintf( "%-9s", $type || "" );
+        _print( $r
+              . sprintf( "%s %s %s%s$eol", $result, $type, $message, $optional )
+        );
     }
     else {
-        print STDERR $r . join( " ", map { defined $_ ? $_ : () } $result, $type, $message . $optional ) . $eol;
+        _print(
+            $r
+              . join( " ",
+                map { defined $_ ? $_ : () } $result,
+                $type, $message . $optional )
+              . $eol
+        );
     }
 
+    return;
+}
+
+sub _print( $s ) {
+    print STDERR $s;
     return;
 }
 
@@ -99,12 +117,22 @@ sub log ( $self_or_class, %options ) {
 sub OK ( $msg, @args ) {
 
     # always displayed
-    return __PACKAGE__->log( type => 'OK', message => $msg, no_progress => 1, @args );
+    return __PACKAGE__->log(
+        type        => 'OK',
+        message     => $msg,
+        no_progress => 1,
+        @args
+    );
 }
 
 sub DONE ( $msg, @args ) {
     return unless $VERBOSE;
-    return __PACKAGE__->log( type => 'DONE', message => $msg, no_progress => 1, @args );
+    return __PACKAGE__->log(
+        type        => 'DONE',
+        message     => $msg,
+        no_progress => 1,
+        @args
+    );
 }
 
 sub DEBUG ( $msg, @args ) {
@@ -118,26 +146,51 @@ sub RUN ( $msg, @args ) {
 }
 
 sub FAIL ( $msg, @args ) {
-    return __PACKAGE__->log( type => 'FAIL', message => $msg, no_progress => 1, @args );
+    return __PACKAGE__->log(
+        type        => 'FAIL',
+        message     => $msg,
+        no_progress => 1,
+        @args
+    );
 }
 
 sub ERROR ( $msg, @args ) {
-    return __PACKAGE__->log( type => 'ERROR', message => $msg, no_progress => 1, @args );
+    return __PACKAGE__->log(
+        type        => 'ERROR',
+        message     => $msg,
+        no_progress => 1,
+        @args
+    );
 }
 
 sub STDERROR ( $msg, @args ) {    # output from IPC run
     return unless $VERBOSE;
-    return __PACKAGE__->log( type => 'STDERROR', message => $msg, no_progress => 1, @args );
+    return __PACKAGE__->log(
+        type        => 'STDERROR',
+        message     => $msg,
+        no_progress => 1,
+        @args
+    );
 }
 
 sub FATAL ( $msg, @args ) {
-    __PACKAGE__->log( type => 'FATAL', message => $msg, no_progress => 1, @args );
+    __PACKAGE__->log(
+        type        => 'FATAL',
+        message     => $msg,
+        no_progress => 1,
+        @args
+    );
     die $msg;
 }
 
 sub WARN ( $msg, @args ) {
     return unless $VERBOSE;
-    return __PACKAGE__->log( type => 'WARN', message => $msg, no_progress => 1, @args );
+    return __PACKAGE__->log(
+        type        => 'WARN',
+        message     => $msg,
+        no_progress => 1,
+        @args
+    );
 }
 
 sub INFO ( $msg, @args ) {
