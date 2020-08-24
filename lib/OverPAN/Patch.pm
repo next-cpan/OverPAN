@@ -18,6 +18,7 @@ use Simple::Accessor qw{
   tarball
 
   work_dir
+  call_from
 };
 with 'OverPAN::Roles::JSON';
 
@@ -30,6 +31,8 @@ use File::Copy qw{move copy};
 use File::Path qw(mkpath rmtree);
 use CPAN::DistnameInfo ();
 use MetaCPAN::Client   ();
+
+use constant OVERPAN_JSON => '.overpan.json';
 
 sub build ( $self, %options ) {
 
@@ -122,6 +125,35 @@ EOS
     return 1;
 }
 
+sub commit($self) {
+    $self->setup_for_commit_abort;
+}
+
+sub abort($self) {
+    my $data = $self->setup_for_commit_abort
+      or do {
+        FAIL "Current directory does not appear to be a valid OverPAN path:\n"
+          . Cwd::cwd;
+        return;
+      };
+
+    chdir( $self->call_from ) or do {
+        FAIL( "Cannot chdir to " . $self->call_from );
+        return;
+    };
+
+    if ( my $wd = $self->work_dir ) {
+        if ( -d "$wd/.git" ) {
+            INFO("Removing directory $wd");
+            rmtree($wd);
+        }
+    }
+
+    OK( "Patch aborted for " . $self->distro_buildname );
+
+    return;
+}
+
 sub _build_tarball($self) {
     return $self->cache_dir . '/' . $self->distro_buildname . '.tar.gz';
 }
@@ -134,6 +166,36 @@ sub git_init($self) {
 
     # apply patches
     $self->apply_patches;
+
+    return;
+}
+
+sub setup_for_commit_abort($self) {
+    return unless -f OVERPAN_JSON;
+    my $data;
+    eval {
+        $data = $self->json->decode( File::Slurper::read_text(OVERPAN_JSON) );
+        1;
+    } or do {
+        FAIL( "Cannot read " . OVERPAN_JSON() . " file from " . Cwd::cwd() );
+        DEBUG($@) if $@;
+        return;
+    };
+
+    return unless defined $data->{overpan_version};
+    return unless defined $data->{call_from};
+
+    $self->work_dir( Cwd::cwd() );
+
+    $self->call_from( $data->{call_from} );
+
+    # restore some variables
+    $self->distro_name( $data->{distro_name} );
+    $self->distro_version( $data->{distro_version} );
+    $self->distro_url( $data->{distro_url} );
+    $self->distro_buildname( $data->{distro_buildname} );
+
+    return $data;
 }
 
 sub setup_overspan_json($self) {
@@ -148,7 +210,7 @@ sub setup_overspan_json($self) {
     };
 
     my $str = $self->json->encode($data);
-    File::Slurper::write_text( $self->work_dir . '/.overpan.json', $str );
+    File::Slurper::write_text( $self->work_dir . '/' . OVERPAN_JSON, $str );
 
     return 1;
 
