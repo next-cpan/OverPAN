@@ -17,11 +17,9 @@ use Simple::Accessor qw{
 
   tarball
 
-  patch_dir
+  work_dir
 };
 with 'OverPAN::Roles::JSON';
-
-# FIXME rename patch_dir to work_dir
 
 use OverPAN::Unpacker ();
 use OverPAN::Http     ();
@@ -40,7 +38,7 @@ sub build ( $self, %options ) {
     return $self;
 }
 
-sub _build_patch_dir($self) {
+sub _build_work_dir($self) {
     my $path = $self->cache_dir . '/' . $self->distro_buildname;
 
     DEBUG("Patch directory: $path");
@@ -69,7 +67,7 @@ sub _build_http {
 }
 
 sub _build_git($self) {
-    return OverPAN::Git->new( $self->patch_dir ); # maybe move it to the client?
+    return OverPAN::Git->new( $self->work_dir );  # maybe move it to the client?
 }
 
 sub setup ( $self, $distro ) {                    # MAYBE move in build...
@@ -89,12 +87,12 @@ sub setup ( $self, $distro ) {                    # MAYBE move in build...
 
     # force option cleanup previous patches
     my $need_setup = 1;
-    my $patch_dir  = $self->patch_dir;
-    if ( -d $patch_dir && -d "$patch_dir/.git" ) {
+    my $work_dir   = $self->work_dir;
+    if ( -d $work_dir && -d "$work_dir/.git" ) {
         my $dv = $self->distro_with_version;
         if ( $self->cli->force ) {
             INFO("Removing previous session for $dv [--force]");
-            rmtree($patch_dir);
+            rmtree($work_dir);
         }
         else {
             $need_setup = 0;
@@ -150,7 +148,7 @@ sub setup_overspan_json($self) {
     };
 
     my $str = $self->json->encode($data);
-    File::Slurper::write_text( $self->patch_dir . '/.overpan.json', $str );
+    File::Slurper::write_text( $self->work_dir . '/.overpan.json', $str );
 
     return 1;
 
@@ -211,21 +209,21 @@ sub extract_tarball($self) {
 
     DEBUG("tarball is extracted to $relative_path");
 
-    my $patch_dir = $self->patch_dir;
-    rmtree($patch_dir) if -d $patch_dir;
-    if ( -e $patch_dir ) {
-        FAIL("Directory exist and cannot be cleanup: $patch_dir");
+    my $work_dir = $self->work_dir;
+    rmtree($work_dir) if -d $work_dir;
+    if ( -e $work_dir ) {
+        FAIL("Directory exist and cannot be cleanup: $work_dir");
         return;
     }
 
     my $extracted_full_path = $tmproot . '/' . $relative_path;
-    move( $extracted_full_path, $patch_dir ) or do {
-        FAIL("Fail to move directory: $extracted_full_path, $patch_dir");
+    move( $extracted_full_path, $work_dir ) or do {
+        FAIL("Fail to move directory: $extracted_full_path, $work_dir");
         return;
     };
 
-    if ( !-d $patch_dir ) {
-        FAIL("Fail to extract tarball $tarball to $patch_dir");
+    if ( !-d $work_dir ) {
+        FAIL("Fail to extract tarball $tarball to $work_dir");
         return;
     }
 

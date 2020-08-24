@@ -49,7 +49,7 @@ At any time you can abort by exiting the current shell session
 either type 'exit' or use 'overpan abort' command.
 EOS
 
-        my $shell = OverPAN::Shell->new( dir => $patch->patch_dir );
+        my $shell = OverPAN::Shell->new( dir => $patch->work_dir );
     }
 
     # return 1 unless scalar @modules;
