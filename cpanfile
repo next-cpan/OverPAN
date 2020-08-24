@@ -7,7 +7,7 @@ requires 'perl', '5.018';
 requires 'CPAN::DistnameInfo';
 requires 'MetaCPAN::Client';
 requires 'Simple::Accessor';
-reqyires 'Git::Repository';
+requires 'Git::Repository';
 
 on test => sub {
 	# continuous integration should only need this
