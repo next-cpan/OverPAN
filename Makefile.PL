@@ -13,6 +13,7 @@ my %WriteMakefileArgs = (
         "ExtUtils::MakeMaker" => 0
     },
     "DISTNAME"         => "OverPAN",
+    "EXE_FILES"        => ["script/overpan"],
     "LICENSE"          => "perl",
     "MIN_PERL_VERSION" => "5.018",
     "NAME"             => "OverPAN",
