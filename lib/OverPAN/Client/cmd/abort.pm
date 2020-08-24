@@ -15,9 +15,12 @@ sub run ( $self, @void ) {
     #     return 1;
     # }
 
-    my $ok = !OverPAN::Patch->new( cli => $self )->abort;
+    my $exit_code = !OverPAN::Patch->new( cli => $self )->abort;
 
-    return $ok;
+    # if run in a shell session exit properly to parent
+    OverPAN::Shell->exit($exit_code);
+
+    return $exit_code;
 }
 
 1;

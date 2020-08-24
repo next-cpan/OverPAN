@@ -32,7 +32,21 @@ sub _build_shell {
 }
 
 sub start($self) {
+    local $ENV{OVERPAN_SHELL} = 1;
     system( $self->shell );
+}
+
+sub exit ( $class, $code ) {
+    return unless $class->is_in_session;
+
+    INFO("exiting shell session");
+    kill( '-KILL' => getppid );
+
+    return;
+}
+
+sub is_in_session {
+    return !!$ENV{OVERPAN_SHELL};
 }
 
 1;

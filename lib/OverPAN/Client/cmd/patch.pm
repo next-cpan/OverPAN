@@ -52,6 +52,8 @@ EOS
         my $shell = OverPAN::Shell->new( dir => $patch->work_dir );
     }
 
+    chdir( $self->cwd );
+
     # return 1 unless scalar @modules;
 
     # my $installer = App::cnext::Installer->new( cli => $self );
