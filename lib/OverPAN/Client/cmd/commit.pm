@@ -7,7 +7,12 @@ use OverPAN::Patch ();
 use OverPAN::Logger;    # import all
 
 sub run ( $self, @void ) {
-    return !OverPAN::Patch->new( cli => $self )->commit;
+    my $exit_code = !OverPAN::Patch->new( cli => $self )->commit;
+
+    # if run in a shell session exit properly to parent
+    OverPAN::Shell->exit($exit_code) if $exit_code == 0;
+
+    return $exit_code;
 }
 
 1;

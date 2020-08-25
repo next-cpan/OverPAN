@@ -126,7 +126,75 @@ EOS
 }
 
 sub commit($self) {
-    $self->setup_for_commit_abort;
+
+    my $cwd = Cwd::cwd;
+
+    $self->setup_for_commit_abort or do {
+        FAIL
+          "Current directory does not appear to be a valid OverPAN path:\n$cwd";
+        return;
+    };
+
+    # check if we have any commits
+
+    my $has_patches = $self->git->has_patches;
+
+    my $call_from            = $self->call_from;
+    my $patch_directory      = $self->patch_directory;
+    my $full_patch_directory = $call_from . '/' . $patch_directory;
+
+    if ( !$has_patches ) {
+
+        INFO( "No patches needed for " . $self->distro_buildname );
+
+        if ( -d $full_patch_directory ) {
+            rmtree($full_patch_directory);
+            INFO("Removing existing patches at $patch_directory");
+        }
+
+        return 1;
+    }
+
+    my $patches = $self->git->format_patches // [];
+
+    # cleanup old patches
+    rmtree($full_patch_directory) if -d $full_patch_directory;
+    mkpath($full_patch_directory);
+
+    my $c = 0;
+    foreach my $p (@$patches) {
+        my $source = $cwd . '/' . $p;
+        my $desti  = sprintf( "%s/%04d.patch", $full_patch_directory, ++$c );
+        copy( $source, $desti ) or do {
+            FAIL("Cannot copy patch $source to $desti");
+            return;
+        };
+    }
+
+    my $total_patches = scalar @$patches;
+    INFO("Updated $total_patches patches to $patch_directory");
+
+    $self->cleanup;
+
+    return 1;
+}
+
+sub patch_directory($self) {
+
+    # 'd/distro/v1.00/'
+
+    my $distro_name    = $self->distro_name    // die;
+    my $distro_version = $self->distro_version // die;
+
+    die unless length $distro_name;
+    die unless length $distro_version;
+
+    my $first;
+    $first = $1 if $distro_name =~ m{^(.)};
+
+    die unless length $first == 1;
+
+    return qq[$first/$distro_name/$distro_version];
 }
 
 sub abort($self) {
@@ -136,6 +204,15 @@ sub abort($self) {
           . Cwd::cwd;
         return;
       };
+
+    $self->cleanup;
+
+    OK( "Patch aborted for " . $self->distro_buildname );
+
+    return;
+}
+
+sub cleanup($self) {
 
     chdir( $self->call_from ) or do {
         FAIL( "Cannot chdir to " . $self->call_from );
@@ -148,8 +225,6 @@ sub abort($self) {
             rmtree($wd);
         }
     }
-
-    OK( "Patch aborted for " . $self->distro_buildname );
 
     return;
 }

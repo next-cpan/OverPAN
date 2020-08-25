@@ -86,4 +86,26 @@ sub apply_patch ( $self, $p ) {
     FATAL("apply_patch WIP");
 }
 
+sub log ( $self, @args ) {
+
+    return $self->run( 'log', @args );
+}
+
+sub has_patches( $self ) {
+
+    my @output = $self->log('root..HEAD');
+    return scalar @output >= 1 ? 1 : 0;
+}
+
+sub format_patches ( $self ) {
+    my @patches = $self->run(
+        qw{format-patch -a --zero-commit --no-numbered
+          --no-signature --diff-algorithm=myers --stat-width=1000
+          },
+        'root..HEAD',
+    );
+
+    return \@patches;
+}
+
 1;
