@@ -40,6 +40,11 @@ jobs:
           cpanfile: cpanfile
           sudo: false
 
+      - name: Setup GitHub config
+        run: |
+          git config --global user.name "GitHub CI"
+          git config --global user.email "ci@github.com"
+
       - name: Running Unit Tests
         run: prove -vl t/*.t
 
