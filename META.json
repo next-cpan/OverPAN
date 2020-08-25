@@ -54,7 +54,9 @@
       "runtime" : {
          "requires" : {
             "CPAN::DistnameInfo" : "0",
+            "File::Basename" : "0",
             "File::Slurper" : "0",
+            "File::Which" : "0",
             "File::pushd" : "0",
             "Git::Repository" : "0",
             "JSON" : "0",
