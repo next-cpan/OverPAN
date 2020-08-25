@@ -38,7 +38,8 @@ my %WriteMakefileArgs = (
     },
     "VERSION" => "0.0001",
     "test"    => {
-        "TESTS" => "t/*.t t/integration/*.t"
+        "TESTS" =>
+          "t/*.t t/fixtures/distro/Simple-Accessor-1.13/t/*.t t/integration/*.t"
     }
 );
 
