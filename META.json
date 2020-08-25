@@ -178,6 +178,18 @@
       "OverPAN::Shell" : {
          "file" : "lib/OverPAN/Shell.pm"
       },
+      "OverPAN::Source" : {
+         "file" : "lib/OverPAN/Source.pm"
+      },
+      "OverPAN::Source::Factory" : {
+         "file" : "lib/OverPAN/Source/Factory.pm"
+      },
+      "OverPAN::Source::FileSys" : {
+         "file" : "lib/OverPAN/Source/FileSys.pm"
+      },
+      "OverPAN::Source::GitHub" : {
+         "file" : "lib/OverPAN/Source/GitHub.pm"
+      },
       "OverPAN::Unpacker" : {
          "file" : "lib/OverPAN/Unpacker.pm"
       },

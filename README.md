@@ -1,67 +1,37 @@
 # NAME
 
-OverPAN -  extra layer on top of CPAN to provide some custom patches
+OverPAN - extra layer on top of CPAN to provide some custom patches
 
 # NAME
 
-App::overpan -  OverPAN client to patch CPAN
+OverPAN - patch CPAN with some community patches
 
 # SYNOPSIS
 
-```
-# Patch Distro-v1.00 recipe
+```perl
+# Create the object and point it to the repo you'll be using.
 
-> overpan Distro-v1.00
-# switch to work-branch
-# apply existing patches
-HACK HACK
-...
-> overpan --commit | --abort
-```
+# defaults to standard CDN location. 
+my $o = OverPAN->new(); # perl_version => 7
 
-Run `overpan -h` or `perldoc overpan` for more options.
+# default is to use repo for perl 7
+my $o = OverPAN->new( perl_version => 7 ); 
+my $o = OverPAN->new( perl_version => 5 );
+
+# Point to your local repo you're developing patches in.
+my $o = OverPAN->new( source => '/path' ); 
+
+# Use an alternate repo
+my $o = OverPAN->new( source => 'https://...' );
+
+# ... Client extracts tarball ....
+$o->patch('Foo::Bar');  # path = . by default
+$o->patch('Foo::Bar', path => '/local/path/to/Foo-Bar');
+
+$o->patch('Foo-Bar', version => 1.21, path => '/local/path/to/Foo-Bar' );
+```
 
 # DESCRIPTION
-
-# INSTALLATION
-
-## Installing OverPAN
-
-# MANUAL
-
-## Patch a distribution
-
-# USAGE
-
-```
-overpan [ACTION] [OPTIONS] [ARGS]
-```
-
-## ACTIONS
-
-```
-  patch               default action to patch a distributions
-  commit              commit patches
-  abort               abort current patch process
-  test                testing the patches for a distro
-  install             installing a distribution with the patches
-  help                display this documentation
-```
-
-## OPTIONS
-
-## Generic options
-
-```
--v, --verbose            Turns on chatty output
--d, --debug              enable --verbose and display some additional informations
-    --color, --no-color  turn on/off color output, default: on
-    --shell, --no-shell  switch to a custom shell for patching a distro. default: on
-```
-
-# Developer guide
-
-...
 
 # Known issues
 
@@ -69,7 +39,6 @@ Probably a lot at this point this is still in active development.
 
 # TODO
 
-- \[ \] setup GitHub pages
 - \[ \] write some pod/doc
 - \[ \] write some tests
 
@@ -99,3 +68,23 @@ warranty. In no event shall the author be held liable for any damages
 arising from the use of the software.
 
 # SEE ALSO
+
+Consider reading the documentation for the command line client
+
+- [OverPAN::Client](https://metacpan.org/pod/OverPAN%3A%3AClient) - the command line tool to create/update patches
+
+    Also consider using traditional CPAN Clients:
+
+    - [App::cpm](https://metacpan.org/pod/App%3A%3Acpm) - a fast CPAN moduler installer
+    - [App:cpanm](App:cpanm) - get, unpack, build and install modules from CPAN
+    - [CPAN](https://metacpan.org/pod/CPAN) - the traditional CPAN client
+    - [CPANPLUS](https://metacpan.org/pod/CPANPLUS)
+    - [pip](https://metacpan.org/pod/pip)
+
+# POD ERRORS
+
+Hey! **The above document had some coding errors, which are explained below:**
+
+- Around line 84:
+
+    &#x3d;over without closing =back
