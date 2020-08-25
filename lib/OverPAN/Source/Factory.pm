@@ -7,14 +7,14 @@ use OverPAN::Source::FileSys ();
 use OverPAN::Source::GitHub  ();
 
 our $DEFAULTS_REPO = {
-    PERL5 => q[],
-    PERL7 => q[],
+    PERL5 => q[https://github.com/next-cpan/OverPAN-p5-patches],
+    PERL7 => q[https://github.com/next-cpan/OverPAN-p7-patches],
 };
 
 sub build ( $class, $overpan ) {
 
     if ( my $url_or_path = $overpan->source ) {
-        if ( $url_or_path =~ m{^http.*github}i ) {
+        if ( $url_or_path =~ m{^http.*github\.com}i ) {
             return OverPAN::Source::GitHub->new($url_or_path);
         }
         elsif ( $url_or_path =~ m{^http}i ) {
