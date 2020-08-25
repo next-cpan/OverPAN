@@ -26,6 +26,12 @@ use OverPAN::Source::Factory;
 
 sub build ( $self, %options ) {
 
+    if ( defined $options{source} && defined $options{perl_version} ) {
+        FATAL(
+"OverPAN->new 'source' and 'perl_version' are mutually exclusive, use one or the other."
+        );
+    }
+
     # FIXME deal with source...
     foreach my $k ( sort keys %options ) {
         $self->{$k} = $options{$k};    # could also use the accessor
