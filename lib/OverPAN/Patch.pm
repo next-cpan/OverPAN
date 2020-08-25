@@ -127,7 +127,7 @@ EOS
 
 sub commit($self) {
 
-    my $cwd = Cwd::cwd;
+    my $cwd = $self->cli->cwd;
 
     $self->setup_for_commit_abort or do {
         FAIL
@@ -201,7 +201,7 @@ sub abort($self) {
     my $data = $self->setup_for_commit_abort
       or do {
         FAIL "Current directory does not appear to be a valid OverPAN path:\n"
-          . Cwd::cwd;
+          . $self->cli->cwd;
         return;
       };
 
@@ -209,7 +209,7 @@ sub abort($self) {
 
     OK( "Patch aborted for " . $self->distro_buildname );
 
-    return;
+    return 1;
 }
 
 sub cleanup($self) {
@@ -252,7 +252,8 @@ sub setup_for_commit_abort($self) {
         $data = $self->json->decode( File::Slurper::read_text(OVERPAN_JSON) );
         1;
     } or do {
-        FAIL( "Cannot read " . OVERPAN_JSON() . " file from " . Cwd::cwd() );
+        FAIL(
+            "Cannot read " . OVERPAN_JSON() . " file from " . $self->cli->cwd );
         DEBUG($@) if $@;
         return;
     };
@@ -260,7 +261,7 @@ sub setup_for_commit_abort($self) {
     return unless defined $data->{overpan_version};
     return unless defined $data->{call_from};
 
-    $self->work_dir( Cwd::cwd() );
+    $self->work_dir( $self->cli->cwd );
 
     $self->call_from( $data->{call_from} );
 
