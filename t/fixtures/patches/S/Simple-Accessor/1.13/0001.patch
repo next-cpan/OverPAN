@@ -1,0 +1,21 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Nicolas Rochelemagne <nicolas.org>
+Date: Tue, 25 Aug 2020 11:59:21 -0600
+Subject: [PATCH] use v5
+
+---
+ lib/Simple/Accessor.pm | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/lib/Simple/Accessor.pm b/lib/Simple/Accessor.pm
+index c4b0e18..957ac47 100644
+--- a/lib/Simple/Accessor.pm
++++ b/lib/Simple/Accessor.pm
+@@ -1,4 +1,7 @@
+ package Simple::Accessor;
++
++use v5;
++
+ $Simple::Accessor::VERSION = '1.13';
+ use strict;
+ use warnings;

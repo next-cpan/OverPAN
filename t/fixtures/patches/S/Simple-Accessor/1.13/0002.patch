@@ -1,0 +1,20 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Nicolas Rochelemagne <nicolas.org>
+Date: Tue, 25 Aug 2020 11:59:23 -0600
+Subject: [PATCH] t/lib/Hooks.pm
+
+---
+ t/lib/Hooks.pm | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/t/lib/Hooks.pm b/t/lib/Hooks.pm
+index a962883..c1b6fad 100644
+--- a/t/lib/Hooks.pm
++++ b/t/lib/Hooks.pm
+@@ -1,5 +1,6 @@
+ package Hooks;
+ 
++use v5;
+ use Simple::Accessor qw{cherry kiwi apple invalid};
+ 
+ sub _before_kiwi {
