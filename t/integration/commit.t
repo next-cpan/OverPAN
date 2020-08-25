@@ -183,6 +183,43 @@ qr{INFO\b.+Updated 2 patches to S/Simple-Accessor/[\d.]+}a;
       "S/Simple-Accessor/$V/0001.patch";
     ok -e qq[$rootdir/S/Simple-Accessor/$V/0002.patch],
       "S/Simple-Accessor/$V/0002.patch";
+
+    ok !-d $patch_directory, "patch_directory was removed";
+}
+
+{
+    note "Reapplying the patches";
+
+    my $in_tmp = pushd($rootdir);    # make sure we start from rootdir
+
+    test_overpan(
+        args => [ qq[--cache=$tmpdir], qw{--no-shell Simple-Accessor} ],
+        exit => 0,
+        test => sub($out) {
+            my $lines = [ split( /\n/, $out->{output} ) ];
+            is $lines => bag {
+                item match qr{INFO\b.+initialize git directory}i;
+                item match qr{INFO\b.+\QApply patch 0001.patch\E};
+                item match qr{INFO\b.+\QApply patch 0002.patch\E};
+                item match qr{INFO\b.+Patch directory:}i;
+                etc;
+            },
+              "re apply patches"
+              or diag explain $lines;
+
+            ok $out->{output} =~ qr{INFO\b.+Patch directory:\s*(.+)$}mi,
+              "can find patch directory";
+            $patch_directory = $1;
+        },
+    );
+
+    ok -d qq[$patch_directory/.git], "we have a pending git directory" or die;
+    my $git = OverPAN::Git->new($patch_directory);
+    my @out = $git->log('root..');
+    like \@out, array {
+        item match qr{add use strict};
+        item match qr{add use v5};
+    }, "the two patches are reapplied";
 }
 
 done_testing;

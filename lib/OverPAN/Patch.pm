@@ -17,6 +17,8 @@ use Simple::Accessor qw{
 
   tarball
 
+  full_path_patch_directory
+
   work_dir
   call_from
 };
@@ -33,7 +35,8 @@ use File::Path qw(mkpath rmtree);
 use CPAN::DistnameInfo ();
 use MetaCPAN::Client   ();
 
-use constant OVERPAN_JSON => '.overpan.json';
+use constant OVERPAN_JSON       => '.overpan.json';
+use constant SUMUP_PATCHES_JSON => 'patches.json';
 
 sub build ( $self, %options ) {
 
@@ -50,6 +53,10 @@ sub _build_work_dir($self) {
     # do not create/remove the directory as part of the builder
 
     return $path;
+}
+
+sub _build_call_from($self) {
+    $self->cli->cwd;    # default when we do not know
 }
 
 sub _build_distro_buildname($self) {
@@ -74,6 +81,7 @@ sub _build_git($self) {
     return OverPAN::Git->new( $self->work_dir );  # maybe move it to the client?
 }
 
+# setup for creating patches
 sub setup ( $self, $distro ) {                    # MAYBE move in build...
                                                   # create build directory
                                                   # download and extract tarball
@@ -140,9 +148,8 @@ sub commit($self) {
 
     my $has_patches = $self->git->has_patches;
 
-    my $call_from            = $self->call_from;
     my $patch_directory      = $self->patch_directory;
-    my $full_patch_directory = $call_from . '/' . $patch_directory;
+    my $full_patch_directory = $self->full_path_patch_directory;
 
     if ( !$has_patches ) {
 
@@ -177,14 +184,12 @@ sub commit($self) {
 
     my $total_patches = scalar @$patches;
 
-    $self->setup_patch_sumup_json( "$full_patch_directory/patches.json",
+    $self->setup_patch_sumup_json(
+        "$full_patch_directory/" . SUMUP_PATCHES_JSON,
         \@final_patches );
+
     $self->cleanup;
-
     INFO("Updated $total_patches patches to $patch_directory");
-
-    DEBUG("chdir $call_from");
-    chdir($call_from);    # return to the call directory
 
     return 1;
 }
@@ -206,6 +211,39 @@ sub setup_patch_sumup_json ( $self, $json_file, $patches ) {
     File::Slurper::write_text( $json_file, $str );
 
     return 1;
+}
+
+sub read_patch_sumup_json( $self ) {
+
+    my $call_from            = $self->call_from;
+    my $patch_directory      = $self->patch_directory;
+    my $full_patch_directory = $self->full_path_patch_directory;
+
+    return unless -d $full_patch_directory;
+
+    my $f = $full_patch_directory . '/' . SUMUP_PATCHES_JSON;
+    return unless -f $f;
+
+    my $data;
+    eval {
+        $data = $self->json->decode( File::Slurper::read_text($f) );
+        1;
+    } or do {
+        FAIL(   "Cannot read "
+              . SUMUP_PATCHES_JSON()
+              . " file from $patch_directory" );
+        DEBUG($@) if $@;
+        return;
+    };
+
+    return $data;
+}
+
+sub _build_full_path_patch_directory( $self ) {
+    my $call_from       = $self->call_from;
+    my $patch_directory = $self->patch_directory;
+
+    return $call_from . '/' . $patch_directory;
 }
 
 sub patch_directory($self) {
@@ -325,9 +363,15 @@ sub apply_patches($self) {
 
     my $git = $self->git;
 
-    my @patches;    # FIXME
-    foreach my $p (@patches) {
-        $git->apply_patch($p);
+    my $sumup = $self->read_patch_sumup_json();    # FIXME cache the object
+
+    if ( ref $sumup && ref $sumup->{patches} ) {
+        my @patches              = $sumup->{patches}->@*;
+        my $full_patch_directory = $self->full_path_patch_directory;
+        foreach my $p (@patches) {
+            INFO( "Apply patch $p for " . $self->distro_buildname );
+            $git->apply_patch("$full_patch_directory/$p");
+        }
     }
 
     return;

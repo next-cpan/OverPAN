@@ -83,7 +83,12 @@ sub init($self) {
 }
 
 sub apply_patch ( $self, $p ) {
-    FATAL("apply_patch WIP");
+    FATAL("Cannot find file $p") unless -f $p;
+
+    $self->run( 'am', $p );
+    INFO("$?");
+
+    return;
 }
 
 sub log ( $self, @args ) {
