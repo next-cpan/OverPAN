@@ -32,7 +32,11 @@ sub _build_shell {
 }
 
 sub start($self) {
-    local $ENV{OVERPAN_SHELL} = 1;
+    if ( is_in_session() ) {
+        WARN("You already running in a Shell session for OverPAN");
+    }
+
+    local $ENV{OVERPAN_SHELL} = 1;    # FIXME store the pid?
     system( $self->shell );
 }
 

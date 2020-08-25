@@ -25,10 +25,13 @@ my $o = OverPAN->new( source => '/path' );
 my $o = OverPAN->new( source => 'https://...' );
 
 # ... Client extracts tarball ....
-$o->patch('Foo::Bar');  # path = . by default
-$o->patch('Foo::Bar', path => '/local/path/to/Foo-Bar');
 
-$o->patch('Foo-Bar', version => 1.21, path => '/local/path/to/Foo-Bar' );
+$o->patch( 'Foo-Bar', '1.21', [ path => '.' ] );
+$o->patch( 'Foo-Bar', '1.21', path => '/local/path/to/Foo-Bar' );
+
+sub patch( $self, $distro, $version, %opts = () ) {
+
+}
 ```
 
 # DESCRIPTION
@@ -85,6 +88,6 @@ Consider reading the documentation for the command line client
 
 Hey! **The above document had some coding errors, which are explained below:**
 
-- Around line 84:
+- Around line 86:
 
     &#x3d;over without closing =back

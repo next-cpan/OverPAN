@@ -11,6 +11,7 @@ BEGIN {
 }
 
 use Cwd ();
+use File::pushd;
 
 our $VERSION = "0.0001";
 
@@ -47,28 +48,64 @@ sub build ( $self, %options ) {
 sub _build_perl_version { 7 }
 
 sub _build_src($self) {
-    return OverPAN::Source::Factory->create($self);
+    return OverPAN::Source::Factory->build($self);
 }
 
 sub _build_cwd {
     return Cwd::cwd();
 }
 
-sub patch ( $self, $distro_or_package, %opts ) {
+sub patch ( $self, $distro, $version, %opts ) {
 
-    my $version = delete $opts{version};
-    my $path    = delete $opts{path} // $self->cwd;
+    my $path = delete $opts{path} // $self->cwd;
 
-    FATAL("Unusupported arguments to patch: ") if scalar keys %opts;
+    if ( scalar keys %opts ) {
+        my $extra = join ', ', sort keys %opts;
+        FATAL("Unusupported arguments to OverPAN::patch: $extra");
+    }
 
-    # Find distro or package using MetaCPAN::Client
-    my $distro;    # FIXME
-                   # Find the version using MetaCPAN::Client if missing
+    FATAL("OverPAN::patch: invalid directory $path") unless -d $path;
+
+    if ( !length $distro ) {
+        FAIL("Missing distro name when calling patch");
+        return;
+    }
+
+    if ( !length $version ) {
+        FAIL("Missing distro version when calling patch");
+        return;
+    }
 
     # Check patches
-    $self->source->get_patches_for( distro => $distro, version => $version );
+    my $patches = $self->src->get_patches_for( $distro, $version );
 
+    my $distro_v = qq[$distro\@$version];
+
+    if ( !ref $patches || !scalar $patches->@* ) {
+        INFO("No patches for $distro_v");
+        return;
+    }
+
+    my @patches = $patches->@*;
+
+    my $cd_in = pushd($path);
+    foreach my $p (@patches) {
+
+        # FIXME basename
+        INFO("Applying patch $p for $distro_v");
+    }
+
+    return 1;
 }
+
+# # Find distro or package using MetaCPAN::Client
+# # Find the version using MetaCPAN::Client if missing
+
+# sub find_distro_and_version( $self, $distro_or_package ) {
+#     my ($distro, $version);
+
+#     return ( $distro, $version );
+# }
 
 1;
 
@@ -102,11 +139,13 @@ OverPAN - patch CPAN with some community patches
     my $o = OverPAN->new( source => 'https://...' );
 
     # ... Client extracts tarball ....
-    $o->patch('Foo::Bar');  # path = . by default
-    $o->patch('Foo::Bar', path => '/local/path/to/Foo-Bar');
 
-    $o->patch('Foo-Bar', version => 1.21, path => '/local/path/to/Foo-Bar' );
-
+    $o->patch( 'Foo-Bar', '1.21', [ path => '.' ] );
+    $o->patch( 'Foo-Bar', '1.21', path => '/local/path/to/Foo-Bar' );
+    
+    sub patch( $self, $distro, $version, %opts = () ) {
+    
+    }
 
 =head1 DESCRIPTION
 

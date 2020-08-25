@@ -172,6 +172,9 @@
       "OverPAN::Patch" : {
          "file" : "lib/OverPAN/Patch.pm"
       },
+      "OverPAN::Path" : {
+         "file" : "lib/OverPAN/Path.pm"
+      },
       "OverPAN::Roles::JSON" : {
          "file" : "lib/OverPAN/Roles/JSON.pm"
       },

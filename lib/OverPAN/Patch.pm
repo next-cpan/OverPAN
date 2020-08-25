@@ -27,6 +27,7 @@ with 'OverPAN::Roles::JSON';
 use OverPAN::Unpacker ();
 use OverPAN::Http     ();
 use OverPAN::Git      ();
+use OverPAN::Path     ();
 
 use POSIX         ();
 use File::Slurper ();
@@ -247,19 +248,8 @@ sub _build_full_path_patch_directory( $self ) {
 sub patch_directory($self) {
 
     # 'd/distro/v1.00/'
-
-    my $distro_name    = $self->distro_name    // die;
-    my $distro_version = $self->distro_version // die;
-
-    die unless length $distro_name;
-    die unless length $distro_version;
-
-    my $first;
-    $first = $1 if $distro_name =~ m{^(.)};
-
-    die unless length $first == 1;
-
-    return qq[$first/$distro_name/$distro_version];
+    return OverPAN::Path::patch_directory( $self->distro_name,
+        $self->distro_version );
 }
 
 sub abort($self) {
