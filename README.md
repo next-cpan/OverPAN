@@ -56,6 +56,7 @@ overpan [ACTION] [OPTIONS] [ARGS]
 -v, --verbose            Turns on chatty output
 -d, --debug              enable --verbose and display some additional informations
     --color, --no-color  turn on/off color output, default: on
+    --shell, --no-shell  switch to a custom shell for patching a distro. default: on
 ```
 
 # Developer guide

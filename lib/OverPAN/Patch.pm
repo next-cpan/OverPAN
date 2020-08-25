@@ -26,6 +26,7 @@ use OverPAN::Unpacker ();
 use OverPAN::Http     ();
 use OverPAN::Git      ();
 
+use POSIX         ();
 use File::Slurper ();
 use File::Copy qw{move copy};
 use File::Path qw(mkpath rmtree);
@@ -187,12 +188,15 @@ sub commit($self) {
 
 sub setup_patch_sumup_json ( $self, $json_file, $patches ) {
 
+    my $timestamp = strftime( "%F %X", gmtime );
+
     my $data = {
         overpan_version => $OverPAN::VERSION,
         distro_name     => $self->distro_name,
         distro_version  => $self->distro_version,
         distro_url      => $self->distro_url,
         patches         => $patches,
+        updated_at      => $timestamp,
     };
 
     my $str = $self->json->encode($data);
@@ -415,7 +419,7 @@ sub set_name_version_url_for_distro ( $self, $distro_or_module ) {
 
     # try to find a distro
     if ( index( $distro, '::' ) == -1 ) {
-        if ( !defined $version ) {
+        if ( !defined $version && index( $distro, '@' ) == -1 ) {
 
             # try to parse the string using CPAN::DistnameInfo
             #   to check if there is a version buried in it

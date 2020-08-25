@@ -145,6 +145,9 @@
       "OverPAN::Client::cmd::abort" : {
          "file" : "lib/OverPAN/Client/cmd/abort.pm"
       },
+      "OverPAN::Client::cmd::commit" : {
+         "file" : "lib/OverPAN/Client/cmd/commit.pm"
+      },
       "OverPAN::Client::cmd::help" : {
          "file" : "lib/OverPAN/Client/cmd/help.pm"
       },

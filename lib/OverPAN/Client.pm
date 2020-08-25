@@ -119,9 +119,12 @@ sub parse_options ( $self, @opts ) {
         "color!" => \( $self->{color} ),
         "shell!" => \( $self->{shell} ),
 
-        "f|force"        => \( $self->{force} ),
-        "v|verbose"      => \( $self->{verbose} ),
-        "d|debug"        => \( $self->{debug} ),
+        "f|force"   => \( $self->{force} ),
+        "v|verbose" => \( $self->{verbose} ),
+        "d|debug"   => \( $self->{debug} ),
+
+        "cache|cache_dir=s" => \( $self->{cache_dir} ),
+
         "show-progress!" => \( $self->{show_progress} ),
     ) or exit 1;
 

@@ -12,6 +12,8 @@ our $VERSION = "0.0001";
 
 1;
 
+# FIXME move the doc and adjust help
+
 =encoding utf8
 
 =head1 NAME
