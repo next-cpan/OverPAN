@@ -108,4 +108,6 @@ my $tmpdir = File::Temp->newdir();
     );
 }
 
+# FIXME try to patch an existing session
+
 done_testing;

@@ -58,8 +58,6 @@ EOS
 
     chdir( $self->cwd );
 
-    #DONE("patch succeeds");
-
     return 0;
 }
 

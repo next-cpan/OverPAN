@@ -183,12 +183,15 @@ sub commit($self) {
 
     INFO("Updated $total_patches patches to $patch_directory");
 
+    DEBUG("chdir $call_from");
+    chdir($call_from);    # return to the call directory
+
     return 1;
 }
 
 sub setup_patch_sumup_json ( $self, $json_file, $patches ) {
 
-    my $timestamp = strftime( "%F %X", gmtime );
+    my $timestamp = POSIX::strftime( "%F %X", gmtime );
 
     my $data = {
         overpan_version => $OverPAN::VERSION,

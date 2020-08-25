@@ -88,7 +88,7 @@ sub apply_patch ( $self, $p ) {
 
 sub log ( $self, @args ) {
 
-    return $self->run( 'log', @args );
+    return $self->run( qw{log --pretty=oneline --abbrev-commit}, @args );
 }
 
 sub has_patches( $self ) {
