@@ -4,7 +4,7 @@ use OverPAN::std;
 use OverPAN::Logger;
 use File::Slurper ();
 
-use base q[Git::Repository];
+use parent q[Git::Repository];
 
 # use Simple::Accessor qw{
 #     dir
@@ -59,6 +59,8 @@ blib/
 pm_to_blib
 .build
 *.tar.gz
+/MYMETA.json
+/MYMETA.yml
 EOS
 
     my $work_tree = $self->work_tree or die;
@@ -73,6 +75,9 @@ sub init($self) {
     $self->run(qw{config advice.ignoredHook false});
 
     $self->setup_gitignore;
+
+    # just a bonus for now
+    eval { $self->command('setup') };
 
     # add all files...
     $self->add('.');
