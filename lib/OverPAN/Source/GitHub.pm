@@ -22,7 +22,7 @@ sub _build_tmp {
 }
 
 sub get_patches_for ( $self, $distro, $version ) {
-    DEBUG("get_patches_for distro: $distro version: $version ");
+    DEBUG("GitHub - get_patches_for distro: $distro version: $version ");
 
     my $base_url = $self->url;
     $base_url =~ s{/+$}{};    # strip trailing /
