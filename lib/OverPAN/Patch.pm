@@ -136,11 +136,8 @@ EOS
 
 sub commit($self) {
 
-    my $cwd = $self->cli->cwd;
-
     $self->setup_for_commit_abort or do {
-        FAIL
-          "Current directory does not appear to be a valid OverPAN path:\n$cwd";
+        FAIL "Current directory does not appear to be a valid OverPAN path";
         return;
     };
 
@@ -170,9 +167,10 @@ sub commit($self) {
     mkpath($full_patch_directory);
 
     my @final_patches;
-    my $c = 0;
+    my $c        = 0;
+    my $work_dir = $self->work_dir;
     foreach my $p (@$patches) {
-        my $source    = $cwd . '/' . $p;
+        my $source    = $work_dir . '/' . $p;
         my $patchfile = sprintf( "%04d.patch", ++$c );
         my $desti     = "$full_patch_directory/$patchfile";
         copy( $source, $desti ) or do {
