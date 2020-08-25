@@ -86,9 +86,11 @@ sub apply_patch ( $self, $p ) {
     FATAL("Cannot find file $p") unless -f $p;
 
     $self->run( 'am', $p );
-    INFO("$?");
+    my $ok = $? == 0;
 
-    return;
+    FAIL("Fail to apply patch $p") unless $ok;
+
+    return $ok;
 }
 
 sub log ( $self, @args ) {
