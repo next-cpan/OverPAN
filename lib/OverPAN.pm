@@ -8,7 +8,7 @@ BEGIN {
     unshift @INC, $vendor if -d $vendor;
 }
 
-our $VERSION  = "0.0001";
+our $VERSION = "0.0001";
 
 1;
 
@@ -68,6 +68,7 @@ Run C<overpan -h> or C<perldoc overpan> for more options.
    -v, --verbose            Turns on chatty output
    -d, --debug              enable --verbose and display some additional informations
        --color, --no-color  turn on/off color output, default: on
+       --shell, --no-shell  switch to a custom shell for patching a distro. default: on
 
 =head1 Developer guide
 

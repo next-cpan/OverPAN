@@ -27,6 +27,7 @@ use Simple::Accessor qw{
   debug
   verbose
   force
+  shell
 };
 
 use File::Path qw(mkpath rmtree);
@@ -116,6 +117,7 @@ sub parse_options ( $self, @opts ) {
 
         # used
         "color!" => \( $self->{color} ),
+        "shell!" => \( $self->{shell} ),
 
         "f|force"        => \( $self->{force} ),
         "v|verbose"      => \( $self->{verbose} ),
@@ -124,6 +126,7 @@ sub parse_options ( $self, @opts ) {
     ) or exit 1;
 
     $self->{color} = 1 if !defined $self->{color} && -t STDOUT;
+    $self->{shell} = 1 if !defined $self->{shell} && -t STDOUT;
     if ( !defined $self->{show_progress} && -t STDOUT ) {
         if ( scalar @ARGV > 1 ) {
             $self->{show_progress} = 1;    # auto hide progress

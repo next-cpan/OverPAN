@@ -38,7 +38,8 @@ sub run ( $self, @distribution ) {
 
     my $distro_with_version = $patch->distro_with_version;
 
-    {
+    if ( $self->shell ) {
+
         # start an interactive shell
         INFO(<<"EOS");
 Starting a new shell for patching $distro_with_version
@@ -50,6 +51,9 @@ either type 'exit' or use 'overpan abort' command.
 EOS
 
         my $shell = OverPAN::Shell->new( dir => $patch->work_dir );
+    }
+    else {
+        INFO( "Patch directory: " . $patch->work_dir );
     }
 
     chdir( $self->cwd );
