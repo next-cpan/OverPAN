@@ -161,20 +161,42 @@ sub commit($self) {
     rmtree($full_patch_directory) if -d $full_patch_directory;
     mkpath($full_patch_directory);
 
+    my @final_patches;
     my $c = 0;
     foreach my $p (@$patches) {
-        my $source = $cwd . '/' . $p;
-        my $desti  = sprintf( "%s/%04d.patch", $full_patch_directory, ++$c );
+        my $source    = $cwd . '/' . $p;
+        my $patchfile = sprintf( "%04d.patch", ++$c );
+        my $desti     = "$full_patch_directory/$patchfile";
         copy( $source, $desti ) or do {
             FAIL("Cannot copy patch $source to $desti");
             return;
         };
+        push @final_patches, $patchfile;
     }
 
     my $total_patches = scalar @$patches;
+
+    $self->setup_patch_sumup_json( "$full_patch_directory/patches.json",
+        \@final_patches );
+    $self->cleanup;
+
     INFO("Updated $total_patches patches to $patch_directory");
 
-    $self->cleanup;
+    return 1;
+}
+
+sub setup_patch_sumup_json ( $self, $json_file, $patches ) {
+
+    my $data = {
+        overpan_version => $OverPAN::VERSION,
+        distro_name     => $self->distro_name,
+        distro_version  => $self->distro_version,
+        distro_url      => $self->distro_url,
+        patches         => $patches,
+    };
+
+    my $str = $self->json->encode($data);
+    File::Slurper::write_text( $json_file, $str );
 
     return 1;
 }
@@ -289,8 +311,6 @@ sub setup_overspan_json($self) {
     File::Slurper::write_text( $self->work_dir . '/' . OVERPAN_JSON, $str );
 
     return 1;
-
-    # $self->json->decode( read_file( $self->file ) );
 }
 
 sub apply_patches($self) {
