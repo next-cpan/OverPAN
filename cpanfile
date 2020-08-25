@@ -6,7 +6,9 @@ requires 'perl', '5.018';
 
 requires 'CPAN::DistnameInfo';
 requires 'File::pushd';
+requires 'File::Basename';
 requires 'File::Slurper';
+requires 'File::Which';
 requires 'Git::Repository';
 requires 'JSON';
 requires 'MetaCPAN::Client';

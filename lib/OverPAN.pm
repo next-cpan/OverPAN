@@ -10,7 +10,12 @@ BEGIN {
     }
 }
 
+use OverPAN::IPC ();
+
 use Cwd ();
+
+use File::Basename ();
+use File::Which    ();
 use File::pushd;
 
 our $VERSION = "0.0001";
@@ -21,6 +26,7 @@ use Simple::Accessor qw{
 
   src
   cwd
+  patch_cmd
 };
 
 use OverPAN::Source::Factory;
@@ -53,6 +59,14 @@ sub _build_src($self) {
 
 sub _build_cwd {
     return Cwd::cwd();
+}
+
+sub _build_patch_cmd {
+    my $patch = File::Which::which('patch');
+    if ( !$patch || !-x $patch ) {
+        FATAL("Cannot find 'patch' binary to apply patches.");
+    }
+    return $patch;
 }
 
 sub patch ( $self, $distro, $version, %opts ) {
@@ -90,10 +104,20 @@ sub patch ( $self, $distro, $version, %opts ) {
 
     my $cd_in = pushd($path);
     foreach my $p (@patches) {
+        my $short_p = File::Basename::basename($p);
+        INFO("Applying patch $short_p for $distro_v");
 
-        # FIXME basename
-        INFO("Applying patch $p for $distro_v");
+        my ( $exit, $out, $err ) =
+          OverPAN::IPC::run3( [ $self->patch_cmd, '-p1', '-i', $p ] );
+        if ( $exit != 0 ) {
+            FAIL("Fail to apply patch $short_p to $distro_v");
+            DEBUG($out) if length $out;
+            ERROR($err) if length $err;
+            return;
+        }
     }
+
+    OK("patched $distro_v");
 
     return 1;
 }
