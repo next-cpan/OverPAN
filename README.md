@@ -11,27 +11,21 @@ OverPAN - patch CPAN with some community patches
 ```perl
 # Create the object and point it to the repo you'll be using.
 
-# defaults to standard CDN location. 
-my $o = OverPAN->new(); # perl_version => 7
+# sample usage
+my $o = OverPAN->new(); 
+$o->patch( 'Foo-Bar', '1.23' ); # assume Foo-Bar is in '.'
+$o->patch( 'Your-Distro', '4.56', path => q[/path/to/distro] );
 
-# default is to use repo for perl 7
+# You can request to use patches for a specific Perl version
+#   default is the current major Perl version used `int( $] )`
 my $o = OverPAN->new( perl_version => 7 ); 
 my $o = OverPAN->new( perl_version => 5 );
 
-# Point to your local repo you're developing patches in.
+# or you can point to a local folder with custom patches
 my $o = OverPAN->new( source => '/path' ); 
 
-# Use an alternate repo
+# use an alternate GitHub repo
 my $o = OverPAN->new( source => 'https://...' );
-
-# ... Client extracts tarball ....
-
-$o->patch( 'Foo-Bar', '1.21', [ path => '.' ] );
-$o->patch( 'Foo-Bar', '1.21', path => '/local/path/to/Foo-Bar' );
-
-sub patch( $self, $distro, $version, %opts = () ) {
-
-}
 ```
 
 # DESCRIPTION
@@ -88,6 +82,6 @@ Consider reading the documentation for the command line client
 
 Hey! **The above document had some coding errors, which are explained below:**
 
-- Around line 86:
+- Around line 80:
 
     &#x3d;over without closing =back
