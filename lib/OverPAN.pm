@@ -182,9 +182,16 @@ OverPAN - patch CPAN with some community patches
     # Create the object and point it to the repo you'll be using.
 
     # sample usage
-    my $o = OverPAN->new(); 
-    $o->patch( 'Foo-Bar', '1.23' ); # assume Foo-Bar is in '.'
-    $o->patch( 'Your-Distro', '4.56', path => q[/path/to/distro] );
+    my $o = OverPAN->new( [%attributes] );
+
+    my $result;
+    $result = $o->patch( 'Foo-Bar', '1.23' ); # assume Foo-Bar is in '.'
+    $result = $o->patch( 'Your-Distro', '4.56', path => q[/path/to/distro] );
+
+    # $result is one OverPAN::PatchResult object
+    $result->success; # boolean to check if the patch command succeeds
+    $result->patched; # boolean to check if the distro is customized
+    $result->message; # string with error or success message
 
     # You can request to use patches for a specific Perl version
     #   default is the current major Perl version used `int( $] )`
@@ -192,7 +199,7 @@ OverPAN - patch CPAN with some community patches
     my $o = OverPAN->new( perl_version => 5 );
 
     # or you can point to a local folder with custom patches
-    my $o = OverPAN->new( source => '/path' ); 
+    my $o = OverPAN->new( source => '/path/to/patches' );
 
     # use an alternate GitHub repo
     my $o = OverPAN->new( source => 'https://...' );
@@ -201,6 +208,49 @@ OverPAN - patch CPAN with some community patches
     my $o = OverPAN->new( debug => 1 ); 
 
 =head1 DESCRIPTION
+
+L<OverPAN> allow to apply some community patches to CPAN distributions
+before installing them.
+
+=head1 ATTRIBUTES
+
+List of attributes you can provide to the constructor C<new>.
+
+=head2 perl_version
+
+You can request patches for a specific version of Perl.
+Otherwise it will use by default your current perl C<$^X> major version C<int($])>.
+
+Default: current Perl major version (i.e. 5 or 7)
+
+=head2 source
+
+C<source> attribute allow you to use a custom GitHub repository or a custom
+path location on your system where patches are stored.
+
+Patches should be created using L<OverPAN::Client>.
+
+=head2 debug
+
+This will enable some extra debug informations available from the L<OverPAN::PatchResult>
+message helper.
+
+default: false
+
+=head1 METHODS
+
+=head2 patch( $distro, $version, [%opts] )
+
+Patch a distribution using the namde C<$distro> and the version C<$version>.
+This is assuming the files from the distribution are extracted in the current
+directory.
+
+    OverPAN->new->patch( 'My-Distro', '1.23' );
+
+If the files are stored in a custom location you can use C<%opts> to specify
+where the distribution is stored on disk.
+
+    OverPAN->new->patch( 'My-Distro', '1.23', path => q[/path/to/My-Distro-1.23] );
 
 =head1 Known issues
 
