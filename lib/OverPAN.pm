@@ -171,12 +171,6 @@ sub _patch ( $self, $result, $distro, $version, %opts ) {
 
 OverPAN - extra layer on top of CPAN to provide some custom patches
 
-=encoding utf8
-
-=head1 NAME
-
-OverPAN - patch CPAN with some community patches
-
 =head1 SYNOPSIS
 
     # Create the object and point it to the repo you'll be using.
@@ -251,6 +245,11 @@ If the files are stored in a custom location you can use C<%opts> to specify
 where the distribution is stored on disk.
 
     OverPAN->new->patch( 'My-Distro', '1.23', path => q[/path/to/My-Distro-1.23] );
+
+The return value of C<patch> is one L<OverPAN::PatchResult> which allow you
+to check if the patch process succeeds and if there were any patches applied.
+
+view L<OverPAN::PatchResult> for more details.
 
 =head1 Known issues
 

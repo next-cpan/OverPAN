@@ -2,10 +2,6 @@
 
 OverPAN - extra layer on top of CPAN to provide some custom patches
 
-# NAME
-
-OverPAN - patch CPAN with some community patches
-
 # SYNOPSIS
 
 ```perl
@@ -87,6 +83,11 @@ where the distribution is stored on disk.
 OverPAN->new->patch( 'My-Distro', '1.23', path => q[/path/to/My-Distro-1.23] );
 ```
 
+The return value of `patch` is one [OverPAN::PatchResult](https://metacpan.org/pod/OverPAN%3A%3APatchResult) which allow you
+to check if the patch process succeeds and if there were any patches applied.
+
+view [OverPAN::PatchResult](https://metacpan.org/pod/OverPAN%3A%3APatchResult) for more details.
+
 # Known issues
 
 Probably a lot at this point this is still in active development.
@@ -139,6 +140,6 @@ Consider reading the documentation for the command line client
 
 Hey! **The above document had some coding errors, which are explained below:**
 
-- Around line 133:
+- Around line 132:
 
     &#x3d;over without closing =back
