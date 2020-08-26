@@ -31,6 +31,8 @@ sub get_patches_for ( $self, $distro, $version ) {
 
     File::Find::find( { wanted => $wanted, follow => 0 }, $path );
 
+    @patches = sort @patches;
+
     return \@patches;
 }
 
