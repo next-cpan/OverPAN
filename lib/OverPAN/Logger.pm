@@ -50,6 +50,15 @@ sub setup_for_script {
     return;
 }
 
+sub enable_debug {
+    $COLOR         = 1;
+    $VERBOSE       = 1;
+    $DEBUG         = 1;
+    $SHOW_PROGRESS = 0;
+
+    return;
+}
+
 sub log ( $self_or_class, %options ) {
 
     my $type    = $options{type} || "";
@@ -92,7 +101,8 @@ sub log ( $self_or_class, %options ) {
         if ($verbose) {
 
             # type -> 5 + 9 + 3
-            $type = $is_color && $type
+            $type =
+              $is_color && $type
               ? sprintf( "%-17s", $type )
               : sprintf( "%-9s",  $type || "" );
             _print( $r

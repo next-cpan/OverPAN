@@ -63,7 +63,7 @@ ok -d $dir_with_patches, "-d /fixtures/patches";
     my $o      = OverPAN->new( source => $dir_with_patches );
     ok $o->patch( 'Simple-Accessor', 1.13 ),
       'patch Simple-Accessor from FileSys';
-    logger_like(qr{OK.+\Qpatched Simple-Accessor@1.13\E});
+    logger_like(qr{OK.+\QPatched Simple-Accessor@1.13\E});
 
 }
 

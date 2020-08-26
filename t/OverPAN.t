@@ -122,12 +122,13 @@ require OverPAN::Git;
 my $git = OverPAN::Git->new($patch_directory);
 $git->run(qw{reset --hard root});    # not really required
 
+#$Test::OverPAN::Logger::DEBUG = 1;
 {
     my $in_tmp = pushd($patch_directory);
 
     my $o = OverPAN->new( perl_version => 7 );
     ok $o->patch( 'Simple-Accessor', 1.13 ), 'patching Simple-Accessor';
-    logger_like(qr{OK.+\Qpatched Simple-Accessor\E});
+    logger_like(qr{OK.+\QPatched Simple-Accessor\E});
 }
 
 done_testing;

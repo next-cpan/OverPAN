@@ -26,6 +26,9 @@ my $o = OverPAN->new( source => '/path' );
 
 # use an alternate GitHub repo
 my $o = OverPAN->new( source => 'https://...' );
+
+# you can also enable some debugging informations
+my $o = OverPAN->new( debug => 1 ); 
 ```
 
 # DESCRIPTION
@@ -82,6 +85,6 @@ Consider reading the documentation for the command line client
 
 Hey! **The above document had some coding errors, which are explained below:**
 
-- Around line 80:
+- Around line 83:
 
     &#x3d;over without closing =back

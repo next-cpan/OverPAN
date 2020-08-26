@@ -23,6 +23,7 @@ our $VERSION = "0.0001";
 use Simple::Accessor qw{
   perl_version
   source
+  debug
 
   src
   cwd
@@ -47,6 +48,8 @@ sub build ( $self, %options ) {
     $self->cwd;                        # setup CWD asap
     $self->src or FATAL("Cannot find a source...");
 
+    OverPAN::Logger::enable_debug() if $self->debug;
+
     return $self;
 }
 
@@ -56,6 +59,8 @@ sub _build_perl_version { int $] }
 sub _build_src($self) {
     return OverPAN::Source::Factory->build($self);
 }
+
+sub _build_debug { 0 }
 
 sub _build_cwd {
     return Cwd::cwd();
@@ -117,19 +122,18 @@ sub patch ( $self, $distro, $version, %opts ) {
         }
     }
 
-    OK("patched $distro_v");
+    my $using_source;
+    if ( $self->source ) {
+        $using_source = $self->source;
+    }
+    else {
+        $using_source = 'p' . $self->perl_version . '-patches';
+    }
+
+    OK("Patched $distro_v using OverPAN source: $using_source");
 
     return 1;
 }
-
-# # Find distro or package using MetaCPAN::Client
-# # Find the version using MetaCPAN::Client if missing
-
-# sub find_distro_and_version( $self, $distro_or_package ) {
-#     my ($distro, $version);
-
-#     return ( $distro, $version );
-# }
 
 1;
 
@@ -164,6 +168,9 @@ OverPAN - patch CPAN with some community patches
 
     # use an alternate GitHub repo
     my $o = OverPAN->new( source => 'https://...' );
+
+    # you can also enable some debugging informations
+    my $o = OverPAN->new( debug => 1 ); 
 
 =head1 DESCRIPTION
 
