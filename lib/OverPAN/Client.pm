@@ -245,7 +245,7 @@ sub run ( $self, @argv ) {
 
 =head1 NAME
 
-OverPAN -  extra layer on top of CPAN to provide some custom patches
+OverPAN::Client - extra layer on top of CPAN to provide some custom patches
 
 =encoding utf8
 
