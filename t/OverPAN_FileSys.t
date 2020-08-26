@@ -30,20 +30,37 @@ ok -d $dir_with_patches, "-d /fixtures/patches";
 {
     my $in_tmp = pushd($tmpdir);
 
-    my $o = OverPAN->new( source => $dir_with_patches );
-    ok !$o->patch( 'Unknown-Distro', 4.56 ),
-      'nothing to patch for an unknown distro';
-    logger_like(qr{\QNo patches for Unknown-Distro@4.56\E});
+    my $o   = OverPAN->new( source => $dir_with_patches );
+    my $res = $o->patch( 'Unknown-Distro', 4.56 );
+
+    is $res, object {
+        prop blessed => 'OverPAN::PatchResult';
+
+        field success => 1;
+        field patched => 0;
+        field message => match qr{\QNo patches for Unknown-Distro@4.56\E};
+
+        etc;
+    }, q[nothing to patch for an unknown distro] or diag explain $res;
 }
 
 {
     my $in_tmp = pushd($tmpdir);
 
-    my $o = OverPAN->new( source => $dir_with_patches );
-    ok !$o->patch( 'Simple-Accessor', 1.13 ),
-      'fail to patch Simple-Accessor outside of the correct directory';
-    logger_like(
-        qr{FAIL.+\QFail to apply patch 0001.patch to Simple-Accessor@1.13\E});
+    my $o   = OverPAN->new( source => $dir_with_patches );
+    my $res = $o->patch( 'Simple-Accessor', 1.13 );
+
+    is $res, object {
+        prop blessed => 'OverPAN::PatchResult';
+
+        field success => 0;
+        field patched => 0;
+        field message => match
+          qr{\QFail to apply patch 0001.patch to Simple-Accessor@1.13\E};
+
+        etc;
+    }, q[fail to patch Simple-Accessor outside of the correct directory]
+      or diag explain $res;
 }
 
 {
@@ -61,10 +78,17 @@ ok -d $dir_with_patches, "-d /fixtures/patches";
 {
     my $in_tmp = pushd("$tmpdir/Simple-Accessor-1.13");
     my $o      = OverPAN->new( source => $dir_with_patches );
-    ok $o->patch( 'Simple-Accessor', 1.13 ),
-      'patch Simple-Accessor from FileSys';
-    logger_like(qr{OK.+\QPatched Simple-Accessor@1.13\E});
+    my $res    = $o->patch( 'Simple-Accessor', 1.13 );
 
+    is $res, object {
+        prop blessed => 'OverPAN::PatchResult';
+
+        field success => 1;
+        field patched => 1;
+        field message => match qr{\QPatched Simple-Accessor@1.13\E};
+
+        etc;
+    }, q[patch Simple-Accessor from FileSys] or diag explain $res;
 }
 
 done_testing;

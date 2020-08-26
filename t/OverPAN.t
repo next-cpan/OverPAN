@@ -2,8 +2,7 @@
 
 use FindBin;
 use lib $FindBin::Bin . '/lib';
-
-use OverPAN::std;
+use lib $FindBin::Bin . '/../lib';
 
 use Test2::Bundle::Extended;
 use Test2::Tools::Explain;
@@ -12,14 +11,14 @@ use Test2::Plugin::NoWarnings;
 use Test::OverPAN::Logger;
 use Test::OverPAN::Client;
 
-#use Capture::Tiny ':all';
-
 use OverPAN::std;
 
 use OverPAN;
 
 use File::Temp;
 use File::pushd;
+
+note $INC{'OverPAN.pm'};
 
 my $tmpdir = File::Temp->newdir();
 
@@ -50,43 +49,84 @@ my $tmpdir = File::Temp->newdir();
 }
 
 {
-    like(
-        dies { OverPAN->new->patch() },
-        qr{\QToo few arguments for subroutine 'OverPAN::patch'\E},
-        'OverPAN->new->patch without any args'
-    );
+    my $res = OverPAN->new->patch();
+    is $res, object {
+        prop blessed => 'OverPAN::PatchResult';
+
+        field success => 0;
+        field patched => 0;
+        field message => 'FAIL - Missing distro name when calling patch';
+
+        etc;
+    }, 'OverPAN->new->patch without any args';
 }
 
 {
-    like(
-        dies { OverPAN->new->patch('A-Distro') },
-        qr{\QToo few arguments for subroutine 'OverPAN::patch'\E},
-        'OverPAN->new->patch without any args'
-    );
+    my $res = OverPAN->new->patch('A-Distro');
+    is $res, object {
+        prop blessed => 'OverPAN::PatchResult';
+
+        field success => 0;
+        field patched => 0;
+        field message => 'FAIL - Missing distro version when calling patch';
+
+        etc;
+    }, q[OverPAN->new->patch('A-Distro')];
 }
 
 {
-    ok !OverPAN->new->patch( '', '' ), 'patch with empty args';
-    logger_like(qr{Missing distro name when calling patch});
+    my $res = OverPAN->new->patch( '', '' );
+    is $res, object {
+        prop blessed => 'OverPAN::PatchResult';
+
+        field success => 0;
+        field patched => 0;
+        field message => 'FAIL - Missing distro name when calling patch';
+
+        etc;
+    }, q[OverPAN->new->patch('', '')];
 }
 
 {
-    ok !OverPAN->new->patch( 'XYZ', '' ), 'patch with empty version only';
-    logger_like(qr{Missing distro version when calling patch});
+    my $res = OverPAN->new->patch( 'XYZ', '' );
+    is $res, object {
+        prop blessed => 'OverPAN::PatchResult';
+
+        field success => 0;
+        field patched => 0;
+        field message => 'FAIL - Missing distro version when calling patch';
+
+        etc;
+    }, q[OverPAN->new->patch('XYZ', '')];
 }
 
 {
-    ok !OverPAN->new->patch( 'An-Unknown-Distro' => 1.23 ),
-      'patch with unknown distro/version: patch( "An-Unknown-Distro" => 1.23 )';
+    my $res = OverPAN->new->patch( 'An-Unknown-Distro' => 1.23 );
+    is $res, object {
+        prop blessed => 'OverPAN::PatchResult';
+
+        field success => 1;
+        field patched => 0;
+        field message => match qr{No patches for An-Unknown-Distro};
+
+        etc;
+    }, q[OverPAN->new->patch( 'An-Unknown-Distro' => 1.23 )]
+      or diag explain $res;
 }
 
 {
-    Test::OverPAN::Logger::clear_logger();
-    my $o = OverPAN->new( perl_version => 7 );
-    ok !$o->patch( 'Simple-Accessor', 1.13 ),
-      'Fail to patch when not in a directory';
-    logger_like(
-        qr{FAIL.+\QFail to apply patch 0001.patch to Simple-Accessor\E});
+    my $res = OverPAN->new( perl_version => 7 )    # .
+      ->patch( 'Simple-Accessor', 1.13 );
+    is $res, object {
+        prop blessed => 'OverPAN::PatchResult';
+
+        field success => 0;
+        field patched => 0;
+        field message => match
+          qr{FAIL.+\QFail to apply patch 0001.patch to Simple-Accessor\E};
+
+        etc;
+    }, q[Fail to patch when not in a directory] or diag explain $res;
 }
 
 my $patch_directory;
@@ -126,9 +166,18 @@ $git->run(qw{reset --hard root});    # not really required
 {
     my $in_tmp = pushd($patch_directory);
 
-    my $o = OverPAN->new( perl_version => 7 );
-    ok $o->patch( 'Simple-Accessor', 1.13 ), 'patching Simple-Accessor';
-    logger_like(qr{OK.+\QPatched Simple-Accessor\E});
+    my $res = OverPAN->new( perl_version => 7 )    # .
+      ->patch( 'Simple-Accessor', 1.13 );
+    is $res, object {
+        prop blessed => 'OverPAN::PatchResult';
+
+        field success => 1;
+        field patched => 1;
+        field message =>
+          q{Patched Simple-Accessor@1.13 using OverPAN source: p7-patches};
+
+        etc;
+    }, q[patching Simple-Accessor] or diag explain $res;
 }
 
 done_testing;

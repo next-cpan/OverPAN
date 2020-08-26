@@ -2,6 +2,7 @@ package OverPAN;
 
 use OverPAN::std;
 use OverPAN::Logger;
+use OverPAN::Logger::Custom;
 
 BEGIN {
     if ( my $vendor = $INC{'OverPAN.pm'} ) {
@@ -10,7 +11,8 @@ BEGIN {
     }
 }
 
-use OverPAN::IPC ();
+use OverPAN::PatchResult ();
+use OverPAN::IPC         ();
 
 use Cwd ();
 
@@ -74,7 +76,30 @@ sub _build_patch_cmd {
     return $patch;
 }
 
-sub patch ( $self, $distro, $version, %opts ) {
+sub patch ( $self, $distro = undef, $version = undef, %opts ) {
+    my $result = OverPAN::PatchResult->new();
+
+    # capture all log messages while we patch
+    my $log = sub ( $class, %opts ) {
+        $result->{message} .= "\n"
+          if defined $result->{message} && length $result->{message};
+        $result->{message} .=
+          sprintf( "%s - %s", $opts{type} // '', $opts{message} // '' );
+    };
+    my $logger = OverPAN::Logger::Custom->new( log => $log );
+
+    # capture `dies` for the end user
+    local $@;
+    eval { $self->_patch( $result, $distro, $version, %opts ); 1 } or do {
+
+        #$result->success( 0 );
+        $result->message($@) if $@;
+    };
+
+    return $result;
+}
+
+sub _patch ( $self, $result, $distro, $version, %opts ) {
 
     my $path = delete $opts{path} // $self->cwd;
 
@@ -102,7 +127,8 @@ sub patch ( $self, $distro, $version, %opts ) {
 
     if ( !ref $patches || !scalar $patches->@* ) {
         INFO("No patches for $distro_v");
-        return;
+        $result->success(1);
+        return 1;
     }
 
     my @patches = $patches->@*;
@@ -130,7 +156,9 @@ sub patch ( $self, $distro, $version, %opts ) {
         $using_source = 'p' . $self->perl_version . '-patches';
     }
 
-    OK("Patched $distro_v using OverPAN source: $using_source");
+    $result->message("Patched $distro_v using OverPAN source: $using_source");
+    $result->success(1);
+    $result->patched(1);
 
     return 1;
 }

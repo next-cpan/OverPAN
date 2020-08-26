@@ -171,8 +171,14 @@
       "OverPAN::Logger" : {
          "file" : "lib/OverPAN/Logger.pm"
       },
+      "OverPAN::Logger::Custom" : {
+         "file" : "lib/OverPAN/Logger/Custom.pm"
+      },
       "OverPAN::Patch" : {
          "file" : "lib/OverPAN/Patch.pm"
+      },
+      "OverPAN::PatchResult" : {
+         "file" : "lib/OverPAN/PatchResult.pm"
       },
       "OverPAN::Path" : {
          "file" : "lib/OverPAN/Path.pm"
