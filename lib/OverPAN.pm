@@ -263,6 +263,16 @@ Probably a lot at this point this is still in active development.
 
 =item * [ ] write some tests
 
+=item * [ ] support for ~/.overpan.cfg
+
+=item * [ ] can set a custom path to patches in configuration: modules/~DISTRO~/~DISTRO~VERSION~
+
+=item * [ ] can set a custom path to source in configuration
+
+=item * [ ] can set default sources for 5 & 7 in configuration
+
+=item * [ ] can set more than a single source for the same Perl version in configuration
+
 =back
 
 =head1 COPYRIGHT
