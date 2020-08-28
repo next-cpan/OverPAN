@@ -96,6 +96,11 @@ Probably a lot at this point this is still in active development.
 
 - \[ \] write some pod/doc
 - \[ \] write some tests
+- \[ \] support for ~/.overpan.cfg
+- \[ \] can set a custom path to patches in configuration: modules/~DISTRO~/~DISTRO~VERSION~
+- \[ \] can set a custom path to source in configuration
+- \[ \] can set default sources for 5 & 7 in configuration
+- \[ \] can set more than a single source for the same Perl version in configuration
 
 # COPYRIGHT
 
@@ -140,6 +145,6 @@ Consider reading the documentation for the command line client
 
 Hey! **The above document had some coding errors, which are explained below:**
 
-- Around line 132:
+- Around line 142:
 
     &#x3d;over without closing =back

@@ -454,7 +454,12 @@ sub set_name_version_url_for_distro ( $self, $distro_or_module ) {
 
     # try to find a distro
     if ( index( $distro, '::' ) == -1 ) {
-        if ( !defined $version && index( $distro, '@' ) == -1 ) {
+        if (
+              !defined $version
+            && index( $distro, '@' ) == -1
+            && index( $distro, '-' ) >= 0    # solves Dancer2 like issues
+          )
+        {
 
             # try to parse the string using CPAN::DistnameInfo
             #   to check if there is a version buried in it
